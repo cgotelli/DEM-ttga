@@ -16,7 +16,7 @@ import scipy.ndimage
 import matplotlib.pyplot as plt
 
 from rasterio.enums import Resampling
-
+#%%
 src = rasterio.open("/home/cgotelli/Desktop/DEM.tif")
 src.meta
 src.count
