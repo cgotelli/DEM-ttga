@@ -55,9 +55,29 @@ def writeFileTTGA(DEM, rows, columns, yres, xres,  name):
                 +' '+ str(minValue)+' '+ str(maxValue)+'\n')
         for line in DEM:
             np.savetxt(f, line, fmt='%.7f') 
+
+def detrendDEM(DEM):
+    print("detrended")
+    DEM = np.squeeze(DEM)
+    DEMmean = np.squeeze(np.nanmean(DEM, axis=0))
+    print(np.shape(DEM))
+    # print(DEMmean)
+    plt.plot(np.expand_dims(range(0,np.shape(DEM)[1], 1), axis=0).T, DEMmean.T)
+    plt.show()
+    
+    onesMatrix = np.ones_like(DEM)
+    DEMmean = np.multiply(DEMmean,onesMatrix)
+    
+    DEM = DEM-DEMmean
+    
+    # print(np.shape(unos))
+    # for i in range(0, np.shape(DEM)[1]):
+        # DEM[:,i] = DEM[:,i] - DEMmean*np.ones((np.shape(DEM)[1],1))
+    
+    return DEM
             
             
-def Process(originalDEMsPath, toProcessPath, orig, originalRes, resolutionFactor, 
+def Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, resolutionFactor, 
             modelFactor, dpi):
     
     finalRes = originalRes*modelFactor/resolutionFactor
@@ -78,21 +98,33 @@ def Process(originalDEMsPath, toProcessPath, orig, originalRes, resolutionFactor
             
                 outputName = toProcessPath+"original_"+file[:-4]+".txt"
                 writeFileTTGA(originalDEM, rows, columns, finalRes, 
-                          finalRes, outputName)
-        
+                          finalRes, outputName)                
+                
             rescaledDEM = rescaleDEM(src, resolutionFactor)
             rescaledDEM[rescaledDEM == -32767] = np.float32('nan')
             rescaledDEM = np.matrix(np.squeeze(rescaledDEM))
             rescaledDEM = rescaledDEM*modelFactor
             columns, rows  = np.shape(rescaledDEM)
+            
             outputName = toProcessPath+"rescaled_"+file[:-4]+".txt"
             writeFileTTGA(rescaledDEM, rows, columns, finalRes,
                           finalRes, outputName)
             
             outputName = toProcessPath+"rescaled_"+file[:-4]+".png"
             printDEM(rescaledDEM, dpi, outputName)    
+            
+            if detrend:
+                print("subtracting mean value for file: "+file)
+                DEM = detrendDEM(rescaledDEM)
+                outputName = toProcessPath+"detrended_"+file[:-4]+".txt"
+                writeFileTTGA(DEM, rows, columns, finalRes,
+                              finalRes, outputName)
+                
+                outputName = toProcessPath+"detrended_"+file[:-4]+".png"
+                printDEM(DEM, dpi, outputName) 
+                
 
-        
+    return DEM
 #%%
 originalDEMsPath = '/home/cgotelli/Documents/ttga_DEM/originalDEMs/'
 toProcessPath = originalDEMsPath+'/../toProcess/'
@@ -103,7 +135,7 @@ modelFactor = 30        # Scale between model and prototype
 dpi = 900
 
 orig = False
+detrend = True
 
-
-Process(originalDEMsPath, toProcessPath, orig, originalRes, resolutionFactor,
+DEM = Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, resolutionFactor,
         modelFactor, dpi)
