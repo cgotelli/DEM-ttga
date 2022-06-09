@@ -62,33 +62,43 @@ def Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor,
     
     finalRes = originalRes*modelFactor/resolutionFactor
     
-    src = rasterio.open("/home/cgotelli/Documents/DEM_images/dsm01.tif")    
-    
-    originalDEM = src.read()
-    originalDEM = np.squeeze(originalDEM)
-    originalDEM = np.matrix(originalDEM)
-    originalDEM = originalDEM*modelFactor
-    columns, rows = np.shape(originalDEM)
-    writeFileTTGA(originalDEM, rows, columns, finalRes, 
-                  finalRes, 'original.txt')
-
-    rescaledDEM = rescaleDEM(src, resolutionFactor)
-    rescaledDEM[rescaledDEM == -32767] = np.float32('nan')
-    rescaledDEM = np.matrix(np.squeeze(rescaledDEM))
-    rescaledDEM = rescaledDEM*modelFactor
-    columns, rows  = np.shape(rescaledDEM)
-    writeFileTTGA(rescaledDEM, rows, columns, finalRes,
-                  finalRes, 'rescaled.txt')
-    
-    printDEM(rescaledDEM, dpi, 'DEM_PNG.png')    
+    for file in os.listdir(originalDEMsPath):
+        
+        if file.endswith(".tif"):
+            originalName = os.path.join(originalDEMsPath, file)
+            
+            src = rasterio.open(originalName)    
+            
+            originalDEM = src.read()
+            originalDEM = np.squeeze(originalDEM)
+            originalDEM = np.matrix(originalDEM)
+            originalDEM = originalDEM*modelFactor
+            columns, rows = np.shape(originalDEM)
+            
+            outputName = toProcessPath+"original_"+file[:-4]+".txt"
+            writeFileTTGA(originalDEM, rows, columns, finalRes, 
+                          finalRes, outputName)
+        
+            rescaledDEM = rescaleDEM(src, resolutionFactor)
+            rescaledDEM[rescaledDEM == -32767] = np.float32('nan')
+            rescaledDEM = np.matrix(np.squeeze(rescaledDEM))
+            rescaledDEM = rescaledDEM*modelFactor
+            columns, rows  = np.shape(rescaledDEM)
+            outputName = toProcessPath+"rescaled_"+file[:-4]+".txt"
+            writeFileTTGA(rescaledDEM, rows, columns, finalRes,
+                          finalRes, outputName)
+            
+            outputName = toProcessPath+"rescaled_"+file[:-4]+".png"
+            printDEM(rescaledDEM, dpi, outputName)    
 
         
 #%%
 originalDEMsPath = '/home/cgotelli/Documents/ttga_DEM/originalDEMs/'
-toProcessPath = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
-resolutionFactor = 1/10
-originalRes = 0.0004    #meters per pixel
-modelFactor = 30
+toProcessPath = originalDEMsPath+'/../toProcess/'
+
+originalRes = 0.0004    # Meters per pixel in DEM from Metashape
+resolutionFactor = 1/10 # Factor to increase/decrease DEM resolution
+modelFactor = 30        # Scale between model and prototype
 
 dpi = 900
 
