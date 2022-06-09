@@ -5,14 +5,14 @@ from os.path import isfile, join, exists
 
 # PATHS -----------------------------------------------------------------------
     # Enter in input_path the path of the file containing the DEMS to process
-input_path = '/home/lhe/Documents/ttga_DEM/toProcess'
+input_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
 
 output_path = join(input_path,'../output/')
 
 if not exists(output_path):
     mkdir(output_path)
     
-ttga_path = '/home/lhe/Documents/ttga_DEM/ttga/build/src/gui/ttga' 
+ttga_path = '/home/cgotelli/Documents/ttga_software/build/src/gui/ttga' 
 
 input_DEMs = [f for f in listdir(input_path) if isfile(join(input_path, f))]
 
