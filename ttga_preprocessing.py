@@ -57,7 +57,7 @@ def writeFileTTGA(DEM, rows, columns, yres, xres,  name):
             np.savetxt(f, line, fmt='%.7f') 
             
             
-def Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor, 
+def Process(originalDEMsPath, toProcessPath, orig, originalRes, resolutionFactor, 
             modelFactor, dpi):
     
     finalRes = originalRes*modelFactor/resolutionFactor
@@ -69,14 +69,15 @@ def Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor,
             
             src = rasterio.open(originalName)    
             
-            originalDEM = src.read()
-            originalDEM = np.squeeze(originalDEM)
-            originalDEM = np.matrix(originalDEM)
-            originalDEM = originalDEM*modelFactor
-            columns, rows = np.shape(originalDEM)
+            if orig:
+                originalDEM = src.read()
+                originalDEM = np.squeeze(originalDEM)
+                originalDEM = np.matrix(originalDEM)
+                originalDEM = originalDEM*modelFactor
+                columns, rows = np.shape(originalDEM)
             
-            outputName = toProcessPath+"original_"+file[:-4]+".txt"
-            writeFileTTGA(originalDEM, rows, columns, finalRes, 
+                outputName = toProcessPath+"original_"+file[:-4]+".txt"
+                writeFileTTGA(originalDEM, rows, columns, finalRes, 
                           finalRes, outputName)
         
             rescaledDEM = rescaleDEM(src, resolutionFactor)
@@ -93,14 +94,16 @@ def Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor,
 
         
 #%%
-originalDEMsPath = '/home/lhe/Documents/ttga_DEM/originalDEMs/'
+originalDEMsPath = '/home/cgotelli/Documents/ttga_DEM/originalDEMs/'
 toProcessPath = originalDEMsPath+'/../toProcess/'
 
 originalRes = 0.0004    # Meters per pixel in DEM from Metashape
 resolutionFactor = 1/10 # Factor to increase/decrease DEM resolution
 modelFactor = 30        # Scale between model and prototype
-
 dpi = 900
 
-Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor,
+orig = False
+
+
+Process(originalDEMsPath, toProcessPath, orig, originalRes, resolutionFactor,
         modelFactor, dpi)
