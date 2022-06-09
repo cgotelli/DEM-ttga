@@ -6,15 +6,14 @@ This is a temporary script file.
 """
 import os
 import rasterio
-from rasterio.plot import show
+# from rasterio.plot import show
 from rasterio.enums import Resampling
 
 import numpy as np
-import shapely.geometry
-import geopandas as gpd
-import glob
-import richdem as rd
-import scipy.ndimage
+# import shapely.geometry
+# import geopandas as gpd
+# import glob
+# import scipy.ndimage
 import matplotlib.pyplot as plt
 
 
@@ -93,7 +92,7 @@ def Process(originalDEMsPath, toProcessPath, originalRes, resolutionFactor,
 
         
 #%%
-originalDEMsPath = '/home/cgotelli/Documents/ttga_DEM/originalDEMs/'
+originalDEMsPath = '/home/lhe/Documents/ttga_DEM/originalDEMs/'
 toProcessPath = originalDEMsPath+'/../toProcess/'
 
 originalRes = 0.0004    # Meters per pixel in DEM from Metashape
