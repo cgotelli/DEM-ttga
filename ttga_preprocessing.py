@@ -13,6 +13,7 @@ import numpy as np
 # import shapely.geometry
 # import geopandas as gpd
 # import glob
+# import richdem as rd
 # import scipy.ndimage
 import matplotlib.pyplot as plt
 
