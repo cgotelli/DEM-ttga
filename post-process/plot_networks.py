@@ -35,7 +35,7 @@ def plot_network (DEM, networks, Delta):
         
     ########################### LEER ACÁ #####################################
     # Añadí la leyenda al plot. Al correr el código se ve que el label está mal 
-    # asignado. Revísalo ,por favor.    
+    # asignado. Revísalo, por favor.    
         
     
     fig = plt.figure(figsize=(30,10))
