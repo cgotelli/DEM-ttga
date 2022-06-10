@@ -1,8 +1,10 @@
+# IMPORT ----------------------------------------------------------------------
 from scipy.io import savemat, loadmat
 from os import listdir
 from os.path import isfile, join
 import numpy as np
 
+# FUNCTION --------------------------------------------------------------------
 def savemat_links(link_sequence_path, save_path):
     
     # List all the link sequences in the path indicated
@@ -52,5 +54,11 @@ def savemat_links(link_sequence_path, save_path):
 
         # Save in a .mat file     
         savemat(save_path + '/' + link_sequence[:-4] + '_postprocess.mat', {'links':link})
-        
-savemat_links('/home/lhe/Documents/Link-sequences', '/home/lhe/Documents/PostProcess/savemat')
+
+
+# PROCESS ---------------------------------------------------------------------        
+
+pathLinkFiles = '/home/cgotelli/Documents/ttga_DEM/output/'
+pathSaveMat = '/home/cgotelli/Documents/ttga_DEM/output/matfiles/'
+
+savemat_links(pathLinkFiles, pathSaveMat)
