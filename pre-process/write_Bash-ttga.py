@@ -23,7 +23,7 @@ input_DEMs = [f for f in listdir(input_path) if isfile(join(input_path, f))]
 
 algorithm = False               # Striation => True 
                                 # Persistence => False                    
-delta = True                     # To modify delta => False
+delta = True                    # To modify delta => False
 simplify = True                 # To simplify the output in striation => False
 hybridStriation = True          # To use the hybrid striation strategy => False
 xRES = True                     # To modify xRes => False
@@ -44,7 +44,7 @@ maxHeight = 10
 boundary_file_path = ''
 
 
-# INIT FILE BASH --------------------------------------------------------------
+# INIT BASH fILE --------------------------------------------------------------
 with open ('bashProcess.sh', 'w') as rsh:
    rsh.write('#! /bin/bash \n')
 

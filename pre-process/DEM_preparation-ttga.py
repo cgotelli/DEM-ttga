@@ -1,23 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Spyder Editor
-
-This is a temporary script file.
-"""
+# IMPORT ----------------------------------------------------------------------
 import os
 import rasterio
-# from rasterio.plot import show
 from rasterio.enums import Resampling
-
 import numpy as np
-# import shapely.geometry
-# import geopandas as gpd
-# import glob
-# import richdem as rd
-# import scipy.ndimage
 import matplotlib.pyplot as plt
 
-
+# FUNCTIONS -------------------------------------------------------------------
 def rescaleDEM(DEM, scaleFactor):
     with DEM as dataset:
         # resample data to target shape
@@ -70,10 +58,6 @@ def detrendDEM(DEM):
     
     DEM = DEM-DEMmean
     
-    # print(np.shape(unos))
-    # for i in range(0, np.shape(DEM)[1]):
-        # DEM[:,i] = DEM[:,i] - DEMmean*np.ones((np.shape(DEM)[1],1))
-    
     return DEM
             
             
@@ -125,17 +109,20 @@ def Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, resolut
                 
 
     return DEM
-#%%
+
+
+# PATHS -----------------------------------------------------------------------
 originalDEMsPath = '/home/cgotelli/Documents/ttga_DEM/originalDEMs/'
 toProcessPath = originalDEMsPath+'/../toProcess/'
 
+# PARAMETERS ------------------------------------------------------------------
 originalRes = 0.0004    # Meters per pixel in DEM from Metashape
 resolutionFactor = 1/10 # Factor to increase/decrease DEM resolution
 modelFactor = 30        # Scale between model and prototype
 dpi = 900
-
 orig = False
 detrend = True
 
-DEM = Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, resolutionFactor,
-        modelFactor, dpi)
+# PROCESS ---------------------------------------------------------------------
+DEM = Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, 
+              resolutionFactor, modelFactor, dpi)
