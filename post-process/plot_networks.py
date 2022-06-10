@@ -31,12 +31,18 @@ def plot_network (DEM, networks, Delta):
     # Create two arrays that will be used to plot each link :
     X = []
     Y = []
+    
         
+    ########################### LEER ACÁ #####################################
+    # Añadí la leyenda al plot. Al correr el código se ve que el label está mal 
+    # asignado. Revísalo ,por favor.    
+        
+    
     fig = plt.figure(figsize=(30,10))
     for i in range(len(index_link)):
 
         # The same index value indicates the same link. We extract its coordinates :
-        if index_link[i]==index_link[i-1]:
+        if index_link[i] == index_link[i-1]:
             X.append(x[i])
             Y.append(y[i])
 
