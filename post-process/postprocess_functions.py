@@ -7,32 +7,12 @@ import matplotlib.pyplot as plt
 import cv2
 
 # FUNCTIONS -------------------------------------------------------------------
-def make_binary(w, h, x_links, y_links, printBinary, postProcessPath):
-    
-    binary = np.zeros((h, w))
-    print('building binary mask')
-    print(np.shape(binary))
-    
-    for x,y in zip(x_links,y_links):
-        binary[int(y-1),int(x-1)] = 1
-    
-    dpi = 900
-    height, width= np.shape(np.squeeze(binary))
-    figsize = width / float(dpi), height / float(dpi)
-
-    fig = plt.figure(figsize=figsize)
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.axis('off')
-    ax.imshow(binary, cmap = 'Greys_r')
-    if printBinary:
-        fig.savefig(postProcessPath+"binary"+".png", dpi=dpi, transparent=True)
-    plt.show()
-    
-    return binary
-
-def load_matfile(matfilePath):
+def load_matfile(matfilePath, Delta):
     links = loadmat(matfilePath)
     links = links ['links']
+    
+    links = links[links[:,1]>=Delta]
+    
     x_links = links[:, 2] 
     y_links = links[:, 3] 
     return links, x_links, y_links
@@ -90,21 +70,42 @@ def plot_network (DEM, networks, Delta):
     plt.axis("off")
     plt.show
     
+def make_binary(w, h, x_links, y_links, printBinary, postProcessPath):
+    
+    binary = np.zeros((h, w))
+    
+    for x,y in zip(x_links,y_links):
+        binary[int(y-1),int(x-1)] = 1
+    
+    dpi = 900
+    height, width= np.shape(np.squeeze(binary))
+    figsize = width / float(dpi), height / float(dpi)
+
+    fig = plt.figure(figsize=figsize)
+    ax = fig.add_axes([0, 0, 1, 1])
+    ax.axis('off')
+    ax.imshow(binary, cmap = 'Greys_r')
+    if printBinary:
+        fig.savefig(postProcessPath+"binary"+".png", dpi=dpi, transparent=True)
+    plt.show()
+    
+    return binary
+    
 # PARAMETERS ------------------------------------------------------------------
 matfilePath = "/home/cgotelli/Documents/ttga_DEM/output/matfiles/links01_postprocess.mat"
 DEM_imagePath = "/home/cgotelli/Documents/ttga_DEM/toProcess/rescaled_dsm02.png"
 postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 
+Delta = 0.1
 
 # BOOLEANS --------------------------------------------------------------------
-
 printBinary = True
 
 
 # PROCESS ---------------------------------------------------------------------
 
 
-links, x_links, y_links = load_matfile(matfilePath)
+links, x_links, y_links = load_matfile(matfilePath, Delta)
 background, w, h, c = load_background(DEM_imagePath)
 
 binary = make_binary(w, h, x_links, y_links, printBinary, postProcessPath)
