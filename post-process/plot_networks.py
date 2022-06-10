@@ -6,13 +6,13 @@ import cv2
 # PATHS -----------------------------------------------------------------------
 
 # Enter the path of the folder containing the DEMs
-DEMs_path = '/home/lhe/Documents/ttga_DEM/DEMs'
+DEMs_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
 
 # Enter the path of the folder containing the network links
-network_path = '/home/lhe/Documents/PostProcess/savemat'
+network_path = '/home/cgotelli/Documents/ttga_DEM/output/matfiles/'
 
 # Enter the path of the post processing folder saving the networks plots
-save_path = '/home/lhe/Documents/PostProcess/NetworkPlots'
+save_path = '/home/cgotelli/Documents/ttga_DEM/output/'
 
 # -----------------------------------------------------------------------------
 
@@ -31,7 +31,8 @@ def plot_network (DEM, networks, Delta):
     # Create two arrays that will be used to plot each link :
     X = []
     Y = []
-
+        
+    fig = plt.figure(figsize=(30,10))
     for i in range(len(index_link)):
 
         # The same index value indicates the same link. We extract its coordinates :
@@ -43,19 +44,28 @@ def plot_network (DEM, networks, Delta):
         # If the index value change, we plot (X,Y) corresponding to the previous link :
             if delta_link[i] > Delta or delta_link[i]=='inf':
                 lab = 'delta=' + str(delta_link[i-1])
-                plt.plot(X, Y, label=lab)
+                ax = plt.subplot(111)
+                ax.plot(X, Y, label=lab)
+                
             # Then we reset X amd Y
             X = []
             Y = []
             X.append(x[i])
             Y.append(y[i])
 
-    plt.imshow(img)
+    ax.imshow(img)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+          fancybox=False, shadow=False, ncol=5)
+    
     plt.title('networks ' +r'$\delta_{lim}=$'+' '+str(Delta))
+    plt.axis("off")
     plt.show
 
 
 # PROCESS ---------------------------------------------------------------------
 Delta = 1
 plot_network (DEMs_path + '/rescaled_dsm01.png', network_path +
-              '/output_rescaled_dsm01txt_postprocess.mat', Delta)
+              '/links01_postprocess.mat', Delta)
