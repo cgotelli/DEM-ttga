@@ -4,7 +4,7 @@ This code is
 
 ```
 DEM-ttga
-├───ttga
+├───ttga-software
 │   ├───step01
 |   
 ├───pre-process
