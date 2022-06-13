@@ -5,12 +5,24 @@ This code is
 ```
 DEM-ttga
 ├───ttga-software
-│   ├───step01
+│       ttga-code.zip
+|       ttga-manual.pdf
 |   
 ├───pre-process
-|   ├───step01
+|       DEM_preparation-ttga.py
+|       write_Bash-ttga.py
+|       bashProcess.sh
 |
 └───post-process
-    ├───step01
+    ├───output
+    |   ├───links_original
+    |   ├───matfiles
+    |   ├───binary
+    |   └───network_plots
+    |
+    └───functions
+            savemat_links.py
+            postprocess_functions.py        
+    
 
 ```
