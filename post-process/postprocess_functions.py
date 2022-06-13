@@ -1,4 +1,4 @@
-# IMPORT ----------------------------------------------------------------------
+# -------------------------------- IMPORT -------------------------------------
 from scipy.io import savemat, loadmat
 from os import listdir, mkdir
 from os.path import isfile, join, exists
@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-# FUNCTIONS -------------------------------------------------------------------
+# ------------------------------ FUNCTIONS ------------------------------------
 def savemat_links(postProcessPath):
     link_sequence_path = join(postProcessPath, "links_original")
     # List all the link sequences in the path indicated
@@ -98,7 +98,6 @@ def make_binary(w, h, x_links, y_links, printBinary, postProcessPath, name):
     ax.imshow(binary, cmap = 'Greys_r')
     if printBinary:
         saveBinaryPath = join(postProcessPath,str(name+"_binary.png"))
-        #print(saveBinaryPath)
         fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
     plt.show()
     
