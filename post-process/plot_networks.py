@@ -6,13 +6,13 @@ import cv2
 # PATHS -----------------------------------------------------------------------
 
 # Enter the path of the folder containing the DEMs
-DEMs_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
+DEMs_path = '/home/lhe/Documents/ttga_DEM/DEMs/'
 
 # Enter the path of the folder containing the network links
-network_path = '/home/cgotelli/Documents/ttga_DEM/output/matfiles/'
+network_path = '/home/lhe/Documents/PostProcess/savemat/'
 
 # Enter the path of the post processing folder saving the networks plots
-save_path = '/home/cgotelli/Documents/ttga_DEM/output/'
+save_path = '/home/lhe/Documents/ttga_DEM/output/'
 
 # -----------------------------------------------------------------------------
 
@@ -27,19 +27,18 @@ def plot_network (DEM, networks, Delta):
     delta_link = links[:,1]
     x = links[:,2]
     y = links[:,3]
-    
+
     # Create two arrays that will be used to plot each link :
     X = []
     Y = []
-    
         
     ########################### LEER ACÁ #####################################
     # Añadí la leyenda al plot. Al correr el código se ve que el label está mal 
-    # asignado. Revísalo, por favor.    
-        
-    
+    # asignado. Revísalo, por favor.
+
     fig = plt.figure(figsize=(30,10))
-    for i in range(len(index_link)):
+
+    for i in range(1,len(x)-1):
 
         # The same index value indicates the same link. We extract its coordinates :
         if index_link[i] == index_link[i-1]:
@@ -48,12 +47,13 @@ def plot_network (DEM, networks, Delta):
 
         else:
         # If the index value change, we plot (X,Y) corresponding to the previous link :
-            if delta_link[i] > Delta or delta_link[i]=='inf':
+            if delta_link[i-1] > Delta or delta_link[i-1]=='inf':
                 lab = 'delta=' + str(delta_link[i-1])
                 ax = plt.subplot(111)
                 ax.plot(X, Y, label=lab)
-                
-            # Then we reset X amd Y
+                print(i)
+
+            # Then we reset X and Y
             X = []
             Y = []
             X.append(x[i])
@@ -72,6 +72,6 @@ def plot_network (DEM, networks, Delta):
 
 
 # PROCESS ---------------------------------------------------------------------
-Delta = 1
+Delta = 8
 plot_network (DEMs_path + '/rescaled_dsm01.png', network_path +
-              '/links01_postprocess.mat', Delta)
+              'output_rescaled_dsm01txt_postprocess.mat', Delta)
