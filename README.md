@@ -14,15 +14,7 @@ DEM-ttga
 |       bashProcess.sh
 |
 └───post-process
-    ├───output
-    |   ├───links_original
-    |   ├───matfiles
-    |   ├───binary
-    |   └───network_plots
-    |
-    └───functions
-            savemat_links.py
-            postprocess_functions.py        
-    
+        savemat_links.py
+        postprocess_functions.py
 
 ```
