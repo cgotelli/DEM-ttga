@@ -46,6 +46,7 @@ def plot_network (DEM, networks, Delta):
             X.append(x[i])
             Y.append(y[i])
 
+<<<<<<< Updated upstream
         else:
         # If the index value change, we plot (X,Y) corresponding to the previous link :
             if delta_link[i] > Delta or delta_link[i]=='inf':
@@ -58,6 +59,12 @@ def plot_network (DEM, networks, Delta):
             Y = []
             X.append(x[i])
             Y.append(y[i])
+=======
+# PARAMETERS ------------------------------------------------------------------
+matfilePath = "/home/lhe/Documents/PostProcess/savemat/link_seq_test_postprocess.mat"
+DEM_imagePath = "/home/lhe/Documents/ttga_DEM/DEMs/rescaled_dsm01.png"
+# PROCESS ---------------------------------------------------------------------
+>>>>>>> Stashed changes
 
     ax.imshow(img)
     box = ax.get_position()
