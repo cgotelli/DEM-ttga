@@ -1,7 +1,7 @@
 # IMPORT ----------------------------------------------------------------------
 from scipy.io import savemat, loadmat
-from os import listdir
-from os.path import isfile, join
+from os import listdir, mkdir
+from os.path import isfile, join, exists
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -38,7 +38,7 @@ def plot_network (DEM, networks, Delta):
     X = []
     Y = []
         
-    fig = plt.figure(figsize=(30,10))
+    plt.figure(figsize=(30,10))
     for i in range(len(index_link)):
 
         # The same index value indicates the same link. We extract its coordinates :
@@ -70,7 +70,16 @@ def plot_network (DEM, networks, Delta):
     plt.axis("off")
     plt.show
     
-def make_binary(w, h, x_links, y_links, printBinary, postProcessPath):
+def makeFolder(postProcessPath, process):
+    output_path = join(postProcessPath, process)
+    if not exists(output_path):
+        mkdir(output_path)
+    
+    
+    
+    
+
+def make_binary(w, h, x_links, y_links, printBinary, postProcessPath, name):
     
     binary = np.zeros((h, w))
     
@@ -86,26 +95,11 @@ def make_binary(w, h, x_links, y_links, printBinary, postProcessPath):
     ax.axis('off')
     ax.imshow(binary, cmap = 'Greys_r')
     if printBinary:
-        fig.savefig(postProcessPath+"binary"+".png", dpi=dpi, transparent=True)
+        saveBinaryPath = join(postProcessPath,str(name+"_binary.png"))
+        print(saveBinaryPath)
+        fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
     plt.show()
     
     return binary
-    
-# PARAMETERS ------------------------------------------------------------------
-matfilePath = "/home/cgotelli/Documents/ttga_DEM/output/matfiles/links01_postprocess.mat"
-DEM_imagePath = "/home/cgotelli/Documents/ttga_DEM/toProcess/rescaled_dsm02.png"
-postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
-
-Delta = 0.1
-
-# BOOLEANS --------------------------------------------------------------------
-printBinary = True
 
 
-# PROCESS ---------------------------------------------------------------------
-
-
-links, x_links, y_links = load_matfile(matfilePath, Delta)
-background, w, h, c = load_background(DEM_imagePath)
-
-binary = make_binary(w, h, x_links, y_links, printBinary, postProcessPath)
