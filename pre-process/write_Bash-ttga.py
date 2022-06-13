@@ -1,25 +1,10 @@
-# IMPORT ----------------------------------------------------------------------
+# -------------------------------- IMPORT -------------------------------------
 from os import listdir, mkdir
 from os.path import isfile, join, exists
 
-
-# PATHS -----------------------------------------------------------------------
-    # Enter in input_path the path of the file containing the DEMS to process
-input_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
-
-output_path = join(input_path,'../output/')
-
-if not exists(output_path):
-    mkdir(output_path)
-    
-ttga_path = '/home/cgotelli/Documents/ttga_software/build/src/gui/ttga' 
-
-input_DEMs = [f for f in listdir(input_path) if isfile(join(input_path, f))]
-
-
-# BOOLEANS --------------------------------------------------------------------
-    # The default mode is defined by 'true'. 
-    # To modify the settings, change 'true' by 'false'.
+# ------------------------------- BOOLEANS ------------------------------------
+# The default mode is defined by 'true'. 
+# To modify the settings, change 'true' by 'false'.
 
 algorithm = False               # Striation => True 
                                 # Persistence => False                    
@@ -35,7 +20,13 @@ links = True                    # To output a link sequence => False
 boundary = True                 # To specify a river boundary file => False
 
 
-# SETTINGS TO MODIFY IF THE BOOLEAN IS FALSE ----------------------------------
+# ------------------------------ PARAMETERS -----------------------------------
+# Enter in input_path the path of the file containing the DEMS to process
+input_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
+
+output_path = join(input_path,'../output/')
+
+ttga_path = '/home/cgotelli/Documents/ttga_software/build/src/gui/ttga' 
 Delta_list = ''         
 xRes = 0.1
 yRes = 0.1
@@ -44,7 +35,13 @@ maxHeight = 10
 boundary_file_path = ''
 
 
-# INIT BASH fILE --------------------------------------------------------------
+# ------------------------------- PROCESS -------------------------------------
+
+if not exists(output_path):
+    mkdir(output_path)
+    
+input_DEMs = [f for f in listdir(input_path) if isfile(join(input_path, f))]
+
 with open ('bashProcess.sh', 'w') as rsh:
    rsh.write('#! /bin/bash \n')
 

@@ -12,7 +12,7 @@ def savemat_links(link_sequence_path, save_path):
     
     # For all link sequences in the list
     for link_sequence in files:
-    
+        #print(link_sequence)
         # Read of the first line which contains the number of links
         seq = open (link_sequence_path + '/' + link_sequence, 'r')
         number_links = seq.readline()

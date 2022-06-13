@@ -11,7 +11,9 @@ def rescaleDEM(DEM, scaleFactor):
         # resample data to target shape
         data = dataset.read(
             out_shape=(dataset.count, int(dataset.height * scaleFactor),
-                int(dataset.width * scaleFactor)),resampling=Resampling.bilinear)
+                       int(dataset.width * scaleFactor)), 
+            resampling=Resampling.bilinear)
+        
     return np.squeeze(data)
     
 def printDEM(im_data, dpi, name):
@@ -28,7 +30,8 @@ def printDEM(im_data, dpi, name):
     ax.axis('off')
 
     # Display the image.
-    ax.imshow(im_data, vmin=minValue, vmax=maxValue, interpolation='nearest', cmap = 'Greys_r')
+    ax.imshow(im_data, vmin=minValue, vmax=maxValue, 
+              interpolation='nearest', cmap = 'Greys_r')
 
 
     fig.savefig(name, dpi=dpi, transparent=True)
@@ -61,8 +64,8 @@ def detrendDEM(DEM):
     return DEM
             
             
-def Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, resolutionFactor, 
-            modelFactor, dpi):
+def Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, 
+            resolutionFactor, modelFactor, dpi):
     
     finalRes = originalRes*modelFactor/resolutionFactor
     
@@ -120,8 +123,8 @@ originalRes = 0.0004    # Meters per pixel in DEM from Metashape
 resolutionFactor = 1/10 # Factor to increase/decrease DEM resolution
 modelFactor = 30        # Scale between model and prototype
 dpi = 900
-orig = False
-detrend = True
+orig = False            # Converts or not the original resolution to txt
+detrend = True          # Remove mean value
 
 # PROCESS ---------------------------------------------------------------------
 DEM = Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, 
