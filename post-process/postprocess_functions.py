@@ -8,13 +8,15 @@ import cv2
 
 # ------------------------------ FUNCTIONS ------------------------------------
 def savemat_links(postProcessPath):
+    
     link_sequence_path = join(postProcessPath, "links_original")
+    print(link_sequence_path)
     # List all the link sequences in the path indicated
-    files = [f for f in listdir(link_sequence_path) if isfile(join(link_sequence_path, f))]
+    files = [f for f in listdir(link_sequence_path) if isfile(join(link_sequence_path, f)) and f.endswith(".txt")]
     
     # For all link sequences in the list
     for link_sequence in files:
-        #print(link_sequence)
+        print(link_sequence)
         # Read of the first line which contains the number of links
         seq = open (link_sequence_path + '/' + link_sequence, 'r')
         number_links = seq.readline()
@@ -55,11 +57,13 @@ def savemat_links(postProcessPath):
                 k = k + 2 
 
         # Save in a .mat file  
-        save_path = join(link_sequence_path,"matfile")
-        savemat(save_path+link_sequence[:-4] + '_postprocess.mat', {'links':link})
-        
-def load_matfile(matfilePath, Delta):
-    join(matfilePath, "matfiles")
+        save_path = join(postProcessPath,"matfiles")
+        savemat(join(save_path, str(link_sequence[:-4] + '.mat')),
+                {'links':link})
+
+
+def load_matfile(matfilesPath, name, Delta):
+    matfilePath = join(matfilesPath, name)
     links = loadmat(matfilePath)
     links = links ['links']
     
@@ -69,10 +73,12 @@ def load_matfile(matfilePath, Delta):
     y_links = links[:, 3] 
     return links, x_links, y_links
 
-def load_background(DEMpath):
+def load_background(postProcessPath, name):
+    # DEM path should be pointing to the png image made with the preprocess function
+    DEMpath = join(postProcessPath, "..","toProcess", str(name[:-4]+".png"))
     DEM = plt.imread(DEMpath)
     (h, w,c) = np.shape(DEM)
-    return DEM, w, h, c
+    return DEM, DEMpath, w, h, c
 
     
 def makeFolder(postProcessPath, process):
@@ -81,8 +87,9 @@ def makeFolder(postProcessPath, process):
         mkdir(output_path)
     
     
-def make_binary(w, h, x_links, y_links, printBinary, postProcessPath, name):
+def make_binary(w, h, x_links, y_links, postProcessPath, name):
     
+    binaryPath = join(postProcessPath, "binary")
     binary = np.zeros((h, w))
     
     for x,y in zip(x_links,y_links):
@@ -96,22 +103,112 @@ def make_binary(w, h, x_links, y_links, printBinary, postProcessPath, name):
     ax = fig.add_axes([0, 0, 1, 1])
     ax.axis('off')
     ax.imshow(binary, cmap = 'Greys_r')
-    if printBinary:
-        saveBinaryPath = join(postProcessPath,str(name+"_binary.png"))
-        fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
+    
+    saveBinaryPath = join(binaryPath, str(name[:-4]+"_binary.png"))
+    fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
+    
     plt.show()
     
     return binary
 
+def plot_network (DEMPath, postProcessPath, links, Delta):
+    # Read the .mat file and the DEM :
+    # data = loadmat(networks)
+    print(DEMPath)
+    saveImgPath = join(postProcessPath,"..", "output", "network")
+    print(saveImgPath)
 
+    img = cv2.imread(DEMPath)
+    # links = data['links']
+    
+    # Extract each column of the links matrix :
+    index_link = links[:,0]
+    delta_link = links[:,1]
+    x = links[:,2]
+    y = links[:,3]
 
-def postprocess(postProcessPath, matfile, network, binary):
+    # Create two arrays that will be used to plot each link :
+    X = []
+    Y = []
+        
+    fig = plt.figure(figsize=(10,10))
+
+    for i in range(1,len(x)-1):
+
+        # The same index value indicates the same link. We extract its coordinates :
+        if index_link[i] == index_link[i-1]:
+            X.append(x[i])
+            Y.append(y[i])
+
+        else:
+        # If the index value change, we plot (X,Y) corresponding to the previous link :
+            if delta_link[i-1] > Delta or delta_link[i-1]=='inf':
+                lab = 'delta=' + str(delta_link[i-1])
+                ax = plt.subplot(111)
+                ax.plot(X, Y, label=lab)
+                print(i)
+
+            # Then we reset X and Y
+            X = []
+            Y = []
+            X.append(x[i])
+            Y.append(y[i])
+    
+    
+    ax.imshow(img)
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1,
+                 box.width, box.height * 0.9])
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+          fancybox=False, shadow=False, ncol=5)
+    
+    plt.title('networks '+ r'$\delta_{lim}=$'+ ' '+ str(Delta))
+    plt.axis("off")
+    fig.savefig(join(saveImgPath,"hola.png"), dpi=100, transparent=False)
+    plt.show
+    
+    # return nodes
+    
+
+def postprocess(postProcessPath, matfile, network, binary, Delta):
+    # Takes files from the Matfiles folder and apply the selected process
     print("Beginning postproces")
+    matfilesPath = join(postProcessPath, "matfiles")
+    link_sequence_path = join(postProcessPath, "links_original")
+    nodes = []
     if matfile:
-        makeFolder(postProcessPath,"matfile")
+        makeFolder(postProcessPath, "matfiles")
+        savemat_links(postProcessPath)
+    
+    files = [f for f in listdir(matfilesPath) if 
+             isfile(join(matfilesPath, f)) and f.endswith(".mat")]
+    
+    
     if network:
-        makeFolder(postProcessPath,"network")
+        makeFolder(postProcessPath, "network")
     if binary:
-        makeFolder(postProcessPath,"binary")
+        makeFolder(postProcessPath, "binary")
+    
+    for file in files:
+        # Print file's name
+        print(file)
+        # Load matfile with links details
+        links, x_links, y_links = load_matfile(matfilesPath, file, Delta)
+        # Load DEM for plots
+        DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
+        
+        if network:
+            nodes.append(plot_network(DEMpath, postProcessPath, links, Delta))
+        if binary:
+            make_binary(w, h, x_links, y_links, postProcessPath, file)
+    
+    # plot_nodes(nodes)
+                    
+
+    return files
+    
+    
+    
+    
     
     

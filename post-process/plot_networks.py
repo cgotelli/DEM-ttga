@@ -6,13 +6,13 @@ import cv2
 # PATHS -----------------------------------------------------------------------
 
 # Enter the path of the folder containing the DEMs
-DEMs_path = '/home/lhe/Documents/ttga_DEM/DEMs/'
+DEMs_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
 
 # Enter the path of the folder containing the network links
-network_path = '/home/lhe/Documents/PostProcess/savemat/'
+network_path = '/home/cgotelli/Documents/ttga_DEM/output/matfiles/'
 
 # Enter the path of the post processing folder saving the networks plots
-save_path = '/home/lhe/Documents/ttga_DEM/output/'
+save_path = '/home/cgotelli/Documents/ttga_DEM/output/'
 
 # -----------------------------------------------------------------------------
 
@@ -72,6 +72,6 @@ def plot_network (DEM, networks, Delta):
 
 
 # PROCESS ---------------------------------------------------------------------
-Delta = 8
+Delta = 1
 plot_network (DEMs_path + '/rescaled_dsm01.png', network_path +
-              'output_rescaled_dsm01txt_postprocess.mat', Delta)
+              'links01_postprocess.mat', Delta)

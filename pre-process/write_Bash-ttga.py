@@ -24,7 +24,7 @@ boundary = True                 # To specify a river boundary file => False
 # Enter in input_path the path of the file containing the DEMS to process
 input_path = '/home/cgotelli/Documents/ttga_DEM/toProcess/'
 
-output_path = join(input_path,'../output/')
+output_path = join(input_path,'../output/links_original')
 
 ttga_path = '/home/cgotelli/Documents/ttga_software/build/src/gui/ttga' 
 Delta_list = ''         
