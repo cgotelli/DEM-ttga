@@ -9,12 +9,13 @@ import numpy as np
 # DEM_imagePath = "/home/cgotelli/Documents/ttga_DEM/toProcess/rescaled_dsm02.png"
 postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 
-Delta = 1
+# Delta = 1
 
 # ------------------------------- BOOLEANS ------------------------------------
 saveMat = False
 plotNetwork = True
-printBinary = True
+printBinary = False
+findNodes = True
 
 # ------------------------------- PROCESS -------------------------------------
 # pp.savemat_links(postProcessPath)
@@ -28,10 +29,10 @@ printBinary = True
 #                         postProcessPath, name)
 
 
-deltas = np.arange(0,100,1)
-print(deltas)
+deltas = np.arange(0.2,10,1)
+# print(deltas)
 
-
-pp.postprocess(postProcessPath, saveMat, plotNetwork, 
-                       printBinary, Delta)
+for Delta in deltas:
+    count_nodes, coords_nodes = pp.postprocess(postProcessPath, saveMat, plotNetwork, 
+                       printBinary, findNodes, Delta)
 

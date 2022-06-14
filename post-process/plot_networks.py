@@ -91,11 +91,13 @@ def plot_network (DEM, networks, Delta, save_path, nodes):
         plt.title('networks ' +r'$\delta_{lim}=$'+' '+ str(Delta))
     plt.axis("on")
     plt.show
+    
+    return links
 
 
 # PROCESS ---------------------------------------------------------------------
-Delta = 1000
-plot_network (DEMs_path + '/rescaled_dsm01.png', network_path +
-              'output_rescaled_dsm01txt_postprocess.mat', Delta, save_path, True)
-compute_nodes (network_path + 'output_rescaled_dsm01txt_postprocess.mat', Delta)
+Delta = 1
+links2 = plot_network (DEMs_path + '/links01.png', network_path +
+              'links01.mat', Delta, save_path, True)
+compute_nodes (network_path + 'links01.mat', Delta)
 
