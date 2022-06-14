@@ -77,7 +77,7 @@ def load_background(postProcessPath, name):
     # DEM path should be pointing to the png image made with the preprocess function
     DEMpath = join(postProcessPath, "..","toProcess", str(name[:-4]+".png"))
     DEM = plt.imread(DEMpath)
-    (h, w,c) = np.shape(DEM)
+    (h, w, c) = np.shape(DEM)
     return DEM, DEMpath, w, h, c
 
     
@@ -87,7 +87,7 @@ def makeFolder(postProcessPath, process):
         mkdir(output_path)
     
     
-def make_binary(w, h, x_links, y_links, postProcessPath, name):
+def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
     
     binaryPath = join(postProcessPath, "binary")
     binary = np.zeros((h, w))
@@ -104,7 +104,7 @@ def make_binary(w, h, x_links, y_links, postProcessPath, name):
     ax.axis('off')
     ax.imshow(binary, cmap = 'Greys_r')
     
-    saveBinaryPath = join(binaryPath, str(name[:-4]+"_binary.png"))
+    saveBinaryPath = join(binaryPath, str(name[:-4]+"_Delta"+str(Delta)+"_binary.png"))
     fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
     
     plt.show()
@@ -146,7 +146,7 @@ def plot_network (DEMPath, postProcessPath, links, Delta):
                 lab = 'delta=' + str(delta_link[i-1])
                 ax = plt.subplot(111)
                 ax.plot(X, Y, label=lab)
-                print(i)
+                # print(i)
 
             # Then we reset X and Y
             X = []
@@ -174,7 +174,7 @@ def postprocess(postProcessPath, matfile, network, binary, Delta):
     # Takes files from the Matfiles folder and apply the selected process
     print("Beginning postproces")
     matfilesPath = join(postProcessPath, "matfiles")
-    link_sequence_path = join(postProcessPath, "links_original")
+    # link_sequence_path = join(postProcessPath, "links_original")
     nodes = []
     if matfile:
         makeFolder(postProcessPath, "matfiles")
@@ -198,14 +198,14 @@ def postprocess(postProcessPath, matfile, network, binary, Delta):
         DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
         
         if network:
-            nodes.append(plot_network(DEMpath, postProcessPath, links, Delta))
+            plot_network(DEMpath, postProcessPath, links, Delta)
         if binary:
-            make_binary(w, h, x_links, y_links, postProcessPath, file)
+            make_binary(w, h, x_links, y_links, postProcessPath, file, Delta)
     
     # plot_nodes(nodes)
                     
 
-    return files
+    # return files
     
     
     

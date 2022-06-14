@@ -1,5 +1,6 @@
 # -------------------------------- IMPORT -------------------------------------
 import postprocess_functions as pp
+import numpy as np
 
 # ------------------------------ PARAMETERS -----------------------------------
 # Path for output folder where links files are stored
@@ -13,7 +14,7 @@ Delta = 1
 # ------------------------------- BOOLEANS ------------------------------------
 saveMat = False
 plotNetwork = True
-printBinary = False
+printBinary = True
 
 # ------------------------------- PROCESS -------------------------------------
 # pp.savemat_links(postProcessPath)
@@ -27,6 +28,10 @@ printBinary = False
 #                         postProcessPath, name)
 
 
+deltas = np.arange(0,100,1)
+print(deltas)
 
-files = pp.postprocess(postProcessPath, saveMat, plotNetwork, printBinary, Delta)
+
+pp.postprocess(postProcessPath, saveMat, plotNetwork, 
+                       printBinary, Delta)
 
