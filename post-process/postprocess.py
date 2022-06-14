@@ -7,7 +7,7 @@ import numpy as np
 # pathLinkFiles = '/home/cgotelli/Documents/ttga_DEM/output/'
 
 # DEM_imagePath = "/home/cgotelli/Documents/ttga_DEM/toProcess/rescaled_dsm02.png"
-postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
+postProcessPath = "/home/lhe/Documents/output/output/"
 
 # Delta = 1
 
@@ -31,8 +31,10 @@ findNodes = True
 
 deltas = np.arange(0.2,10,1)
 # print(deltas)
-
+count_nodes = []
+coords_nodes=[]
 for Delta in deltas:
-    count_nodes, coords_nodes = pp.postprocess(postProcessPath, saveMat, plotNetwork, 
+    count_nodesi, coords_nodesi = pp.postprocess(postProcessPath, saveMat, plotNetwork, 
                        printBinary, findNodes, Delta)
-
+    count_nodes.append(count_nodesi)
+    coords_nodes.append(coords_nodesi)

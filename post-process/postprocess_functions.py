@@ -240,7 +240,3 @@ def postprocess(postProcessPath, matfile, network, binary, findNodes, Delta):
                     
     return count_nodes, coords_nodes
     
-    
-    
-    
-    
