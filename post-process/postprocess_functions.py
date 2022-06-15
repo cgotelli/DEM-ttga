@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-dpi = 10
+dpi = 100
 
 
 # ------------------------------ FUNCTIONS ------------------------------------
@@ -422,6 +422,9 @@ def postprocess(
 
     # Load matfile with links details
     links, x_links, y_links = load_matfile(matfilesPath, file, Delta)
+    
+    print(np.shape(x_links))
+    print(np.shape(y_links))
     # Load DEM for plots
     DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
 

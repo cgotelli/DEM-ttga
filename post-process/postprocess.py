@@ -5,11 +5,11 @@ from os.path import join
 # ------------------------------ PARAMETERS -----------------------------------
 # Path for output folder where links files are stored
 
-postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
+postProcessPath = "/home/cmgotelli/Documents/ttga_DEM/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [0.001]
+deltas = [0.1]
 
 
 count_nodes = []  # Number of nodes per network (delta)
@@ -21,7 +21,7 @@ network_length = []  # Array for network length for each delta
 # Booleans for appyling (or not) the different processes
 saveMat = False
 plotNetwork = True
-printBinary = True
+printBinary = False
 findNodes = True
 plotNodeCount = True
 computeLength = True
