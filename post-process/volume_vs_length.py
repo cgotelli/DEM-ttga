@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 # PATHS -----------------------------------------------------------------------
 
 # Enter the path of the folder containing the network links
-network_path = '/home/lhe/Documents/PostProcess/savemat/'
+network_path = '/home/cgotelli/Documents/ttga_DEM/output/matfiles/'
 
 # Enter the path of the post processing folder saving the networks plots
-save_path = '/home/lhe/Documents/ttga_DEM/output/'
+save_path = '/home/cgotelli/Documents/ttga_DEM/output/'
 
 def link_length(x,y):
     length = 0
@@ -63,4 +63,4 @@ def plot_volume_length(network):
     plt.axis("on")
     plt.show 
 
-plot_volume_length(network_path + 'output_rescaled_dsm01txt_postprocess.mat')
+plot_volume_length(network_path + 'links01.mat')

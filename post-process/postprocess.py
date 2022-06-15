@@ -1,40 +1,74 @@
 # -------------------------------- IMPORT -------------------------------------
 import postprocess_functions as pp
-import numpy as np
+from os.path import join
 
 # ------------------------------ PARAMETERS -----------------------------------
 # Path for output folder where links files are stored
-# pathLinkFiles = '/home/cgotelli/Documents/ttga_DEM/output/'
 
-# DEM_imagePath = "/home/cgotelli/Documents/ttga_DEM/toProcess/rescaled_dsm02.png"
-postProcessPath = "/home/lhe/Documents/output/output/"
+postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
+matfilesPath = join(postProcessPath, "matfiles")
 
-# Delta = 1
+# deltas = np.arange(0.2, 1, 0.1)
+deltas = [0.001]
 
+
+count_nodes = []  # Number of nodes per network (delta)
+coords_nodes = []  # List of coordinates for each per network
+delta_nodes = []  # List of delta value for each node list
+file_names = []  # Name of file to which each node list belongs
+network_length = []  # Array for network length for each delta
 # ------------------------------- BOOLEANS ------------------------------------
+# Booleans for appyling (or not) the different processes
 saveMat = False
 plotNetwork = True
-printBinary = False
+printBinary = True
 findNodes = True
+plotNodeCount = True
+computeLength = True
+plotLenght = True
+plotVolume = True
 
 # ------------------------------- PROCESS -------------------------------------
-# pp.savemat_links(postProcessPath)
+# We transform to matfile the links *.txt file.
+if saveMat:
+    pp.makeFolder(postProcessPath, "matfiles")
+    pp.savemat_links(postProcessPath)
 
-# links, x_links, y_links = pp.load_matfile(postProcessPath, Delta)
+# List of matfiles inside matfilesPath directory
+files = pp.list_matfiles(matfilesPath)
 
-# background, w, h, c = pp.load_background(postProcessPath)
+# For each DEM file we apply the processes defined above
+for file in files:
+    print("Beginning postproces for file: " + file)
+    for Delta in deltas:
 
-# name = "test" # This should come from the for-loop for each file to postprocess
-# binary = pp.make_binary(w, h, x_links, y_links, printBinary, 
-#                         postProcessPath, name)
+        links, count_nodesi, coords_nodesi, net_length = pp.postprocess(
+            postProcessPath,
+            matfilesPath,
+            file,
+            saveMat,
+            plotNetwork,
+            printBinary,
+            findNodes,
+            computeLength,
+            plotVolume,
+            plotNodeCount,
+            Delta,
+        )
 
+        count_nodes.append(count_nodesi)
+        coords_nodes.append(coords_nodesi)
+        delta_nodes.append(Delta)
+        file_names.append(file)
+        network_length.append(net_length)
 
-deltas = np.arange(0.2,10,1)
-# print(deltas)
-count_nodes = []
-coords_nodes=[]
-for Delta in deltas:
-    count_nodesi, coords_nodesi = pp.postprocess(postProcessPath, saveMat, plotNetwork, 
-                       printBinary, findNodes, Delta)
-    count_nodes.append(count_nodesi)
-    coords_nodes.append(coords_nodesi)
+    if plotVolume:
+        pp.plot_volume_length(links, postProcessPath, file)
+
+if plotNodeCount:
+    print("Here we print the nodes graph evolution")
+    pp.plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath)
+
+if plotLenght:
+    print("Here we print the network length evolution")
+    pp.plot_length(file_names, delta_nodes, network_length, postProcessPath)

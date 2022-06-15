@@ -90,7 +90,7 @@ def Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes,
             rescaledDEM = rescaleDEM(src, resolutionFactor)
             rescaledDEM[rescaledDEM == -32767] = np.float32('nan')
             rescaledDEM = np.matrix(np.squeeze(rescaledDEM))
-            rescaledDEM = rescaledDEM*modelFactor
+            DEM = rescaledDEM*modelFactor
             columns, rows  = np.shape(rescaledDEM)
             
             outputName = toProcessPath+"rescaled_"+file[:-4]+".txt"
@@ -124,7 +124,7 @@ resolutionFactor = 1/10 # Factor to increase/decrease DEM resolution
 modelFactor = 30        # Scale between model and prototype
 dpi = 900
 orig = False            # Converts or not the original resolution to txt
-detrend = True          # Remove mean value
+detrend = False          # Remove mean value
 
 # PROCESS ---------------------------------------------------------------------
 DEM = Process(originalDEMsPath, detrend, toProcessPath, orig, originalRes, 
