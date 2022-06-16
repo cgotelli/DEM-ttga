@@ -1,17 +1,12 @@
 import DEM_functions_ttga as df
 
 # --------------------------------- PATHS -------------------------------------
-#
+# Path where the original DEMs are stored
 originalDEMsPath = "/home/cgotelli/Documents/ttga_DEM/originalDEMs/"
-
-# Path to executable file of ttga
+# Path for TTGA's executable file. Read the README file for folder structure example.
 ttga_path = "/home/cgotelli/Documents/ttga_software/build/src/gui/ttga"
 
-
-
-
-
-# PARAMETERS ------------------------------------------------------------------
+# ---------------------- DEM preparation parameters ---------------------------
 originalRes = 0.0004  # Meters per pixel in original DEMs
 resolutionFactor = 1 / 10  # Factor to increase/decrease DEM resolution
 modelFactor = 30  # Scale between model and prototype. Set 1 for real size DEMs.
@@ -19,13 +14,9 @@ dpi = 900 # Image quality
 orig = False  # Convert or not the original resolution DEM to TTGA-txt input
 detrend = True  # Remove mean value
 
+# --------------------------------- TTGA --------------------------------------
 
-
-
-
-
-
-# ------------------------------- BOOLEANS ------------------------------------
+# BOOLEANS FOR CHOOSING TTGA'S OPTIONS
 # The default mode is defined by 'true'.
 # To modify the settings, change 'true' by 'false'.
 
@@ -42,9 +33,7 @@ links = False  # To output a link sequence instead of graph => False. Should be 
 boundary = True  # To specify a river boundary file => False
 
 
-
-
-
+# PARAMETERS FOR TTGA COMPUTATION
 
 Delta_list = ""
 xRes = 0.1
@@ -54,7 +43,7 @@ maxHeight = 10
 boundary_file_path = ""
 
 
-# PROCESS ---------------------------------------------------------------------
+# --------------------------------- TTGA --------------------------------------
 
 toProcessPath = originalDEMsPath + "/../toProcess/"
 
