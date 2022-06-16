@@ -23,10 +23,10 @@ boundary = True  # To specify a river boundary file => False
 # ------------------------------ PARAMETERS -----------------------------------
 # Enter in input_path the path of the file containing the DEMS to process
 # coming from script DEM_preparation-ttga.py
-input_path = "/home/cmgotelli/Documents/ttga_DEM/toProcess/"
+input_path = "/home/cgotelli/Documents/ttga_DEM/toProcess/"
 
 # Path to executable file of ttga
-ttga_path = "/home/cmgotelli/Documents/ttga_software/build/src/gui/ttga"
+ttga_path = "/home/cgotelli/Documents/ttga_software/build/src/gui/ttga"
 
 
 Delta_list = ""
