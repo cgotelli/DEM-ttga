@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
-dpi = 100
+dpi = 300
 
 
 # ------------------------------ FUNCTIONS ------------------------------------
@@ -100,18 +100,12 @@ def makeFolder(postProcessPath, process):
 
 
 def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
-    print(np.shape(x_links))
-    min_x_links = np.min(x_links)
-    max_x_links = np.max(x_links)
-    min_y_links = np.min(y_links)
-    min_y_links = np.max(y_links)
-    print(w)
-    print(h)
+    
     binaryPath = join(postProcessPath, "binary")
     binary = np.zeros((h, w))
 
     for x, y in zip(x_links, y_links):
-        binary[np.max(0,int(y - 1)), np.max(0,int(x - 1))] = 1
+        binary[int(y - 1), int(x - 1)] = 1
 
     height, width = np.shape(np.squeeze(binary))
     figsize = width / float(dpi), height / float(dpi)
@@ -127,7 +121,7 @@ def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
             name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_binary.png"
         ),
     )
-    fig.savefig(saveBinaryPath, dpi=dpi, transparent=True)
+    fig.savefig(saveBinaryPath, dpi=dpi, transparent=True, bbox_inches='tight')
 
     plt.show()
 
@@ -197,7 +191,7 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
             if delta_link[i - 1] > Delta or delta_link[i - 1] == "inf":
                 lab = "delta=" + str("{:1.2f}".format(delta_link[i - 1]))
                 ax = plt.subplot(111)
-                ax.plot(X, Y, label=lab, markersize=0.5)
+                ax.plot(X, Y, label=lab, linewidth=0.5)
 
             # Then we reset X and Y
             X = []
@@ -216,14 +210,14 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
         bbox_to_anchor=(0.5, -0.05),
         fancybox=False,
         shadow=False,
-        ncol=3,
+        ncol=4, fontsize=5
     )
-
+    count_nodes, Node = compute_nodes(links, Delta)
     if includeNodes:
         # print("entered nodes")
-        count_nodes, Node = compute_nodes(links, Delta)
+        
         for line in Node:
-            plt.scatter(line[0], line[:][1], color="red")
+            plt.scatter(line[0], line[:][1], color="red", s=5)
             plt.title(
                 "networks "
                 + r"$\delta_{lim}=$"
@@ -233,14 +227,14 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
                 + str(count_nodes)
             )
     else:
-        plt.title(
+        fig.suptitle(
             "networks "
             + r"$\delta_{lim}=$"
             + " "
             + str("{:1.1f}".format(Delta))
         )
     plt.axis("off")
-
+    
     plt.show()
 
     saveNetworkPath = join(
@@ -253,7 +247,7 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
         ),
     )
 
-    fig.savefig(saveNetworkPath, dpi=dpi, transparent=False)
+    fig.savefig(saveNetworkPath, dpi=dpi, transparent=False, bbox_inches='tight')
     return count_nodes, Node
 
 
@@ -315,6 +309,7 @@ def plot_volume_length(links, postProcessPath, file):
     plt.xlabel(r"$\delta$")
     plt.ylabel("Network length")
     plt.axis("on")
+    
     plt.show
 
     saveImgPath = join(postProcessPath, "..", "output", "others")
@@ -324,11 +319,11 @@ def plot_volume_length(links, postProcessPath, file):
         str(file[:-4] + "_volumeLength.png"),
     )
 
-    fig.savefig(saveVolumePath, dpi=dpi, transparent=False)
+    fig.savefig(saveVolumePath, dpi=dpi, transparent=False, box_inches='tight')
 
 
-def plot_length(file_names, delta_nodes, network_length, postProcessPath):
-    fig = plt.figure()
+def plot_Networklength(file_names, delta_nodes, network_length, postProcessPath):
+    fig = plt.figure(figsize=(8,6))
     plt.style.use("seaborn-white")
     # For each delta value,  we plot the network lenght for all DEMs
     deltas = np.unique(delta_nodes)
@@ -350,8 +345,10 @@ def plot_length(file_names, delta_nodes, network_length, postProcessPath):
 
     plt.ylabel("Network length")
     plt.xlabel("DEM files")
+    plt.xticks(rotation = 45) 
     plt.axis("on")
     plt.show
+    plt.tight_layout()
 
     saveImgPath = join(postProcessPath, "..", "output", "others")
     saveVolumePath = join(
@@ -359,12 +356,12 @@ def plot_length(file_names, delta_nodes, network_length, postProcessPath):
         str("NetworkLength.png"),
     )
 
-    fig.savefig(saveVolumePath, dpi=dpi, transparent=False)
+    fig.savefig(saveVolumePath, transparent=False, box_inches='tight')
 
 
 def plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath):
-
-    fig = plt.figure()
+  
+    fig = plt.figure(figsize=(8,6))
     plt.style.use("seaborn-white")
     # For each delta value,  we plot the network lenght for all DEMs
     deltas = np.unique(delta_nodes)
@@ -389,6 +386,8 @@ def plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath):
     plt.ylabel("Nodes count")
     plt.xlabel("DEM files")
     plt.axis("on")
+    plt.xticks(rotation = 45)
+    plt.tight_layout()
     plt.show
 
     saveImgPath = join(postProcessPath, "..", "output", "others")
@@ -397,7 +396,7 @@ def plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath):
         str("NodesCount.png"),
     )
 
-    fig.savefig(saveVolumePath, dpi=dpi, transparent=False)
+    fig.savefig(saveVolumePath, transparent=False, bbox_inches='tight')
 
 
 def postprocess(

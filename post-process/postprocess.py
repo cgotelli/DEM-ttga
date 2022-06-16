@@ -19,14 +19,14 @@ file_names = []  # Name of file to which each node list belongs
 network_length = []  # Array for network length for each delta
 # ------------------------------- BOOLEANS ------------------------------------
 # Booleans for appyling (or not) the different processes
-saveMat = True
-plotNetwork = True
-printBinary = True
-includeNodes = True
-plotNodeCount = True
-computeLength = True
-plotLenght = True
-plotVolume = True
+saveMat = False # Transform links' .txt files to .mat
+plotNetwork = True # Plot DEM with 
+plotBinary = True # Plot
+includeNodes = False
+plotNodeCount = False # Plot total number of nodes in time. If True, "plotNetwork" must be True
+computeLength = False
+plotLenght = False # To plot network length in time. If True, "computeLength" must be True
+plotVolume = False
 
 # ------------------------------- PROCESS -------------------------------------
 # We transform to matfile the links *.txt file.
@@ -37,8 +37,11 @@ if saveMat:
 # List of matfiles inside matfilesPath directory
 files = pp.list_matfiles(matfilesPath)
 
+files = sorted(files) # Sort by name
+
 # For each DEM file we apply the processes defined above
 for file in files:
+    
     print("Beginning postproces for file: " + file)
     for Delta in deltas:
 
@@ -48,7 +51,7 @@ for file in files:
             file,
             saveMat,
             plotNetwork,
-            printBinary,
+            plotBinary,
             includeNodes,
             computeLength,
             plotVolume,
@@ -71,4 +74,4 @@ if plotNodeCount:
 
 if plotLenght:
     print("Here we print the network length evolution")
-    pp.plot_length(file_names, delta_nodes, network_length, postProcessPath)
+    pp.plot_Networklength(file_names, delta_nodes, network_length, postProcessPath)
