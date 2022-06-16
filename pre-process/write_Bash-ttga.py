@@ -45,13 +45,15 @@ if not exists(output_path):
     mkdir(output_path)
 
 input_DEMs = [
-    f for f in listdir(input_path) if isfile(join(input_path, f)) and f.endswith(".txt")
+    f
+    for f in listdir(input_path)
+    if isfile(join(input_path, f)) and f.endswith(".txt")
 ]
 
 with open(join(input_path, "bashProcess.sh"), "w") as rsh:
     rsh.write("#! /bin/bash \n")
 
-    for DEM in input_DEMs:
+    for DEM in reversed(input_DEMs):
 
         # Writting the TTGA path
         rsh.write(ttga_path + " ")

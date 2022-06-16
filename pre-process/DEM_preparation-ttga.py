@@ -10,7 +10,7 @@ resolutionFactor = 1 / 10  # Factor to increase/decrease DEM resolution
 modelFactor = 30  # Scale between model and prototype
 dpi = 900
 orig = False  # Converts or not the original resolution to txt
-detrend = False  # Remove mean value
+detrend = True  # Remove mean value
 
 # PROCESS ---------------------------------------------------------------------
 DEM = DF.Process(

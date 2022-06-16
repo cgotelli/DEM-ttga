@@ -36,7 +36,11 @@ def printDEM(im_data, dpi, name):
 
     # Display the image.
     ax.imshow(
-        im_data, vmin=minValue, vmax=maxValue, interpolation="nearest", cmap="Greys_r"
+        im_data,
+        vmin=minValue,
+        vmax=maxValue,
+        interpolation="nearest",
+        cmap="Greys_r",
     )
 
     fig.savefig(name, dpi=dpi, transparent=True)
@@ -72,7 +76,9 @@ def detrendDEM(DEM):
     DEMmean = np.squeeze(np.nanmean(DEM, axis=0))
     print(np.shape(DEM))
     # print(DEMmean)
-    plt.plot(np.expand_dims(range(0, np.shape(DEM)[1], 1), axis=0).T, DEMmean.T)
+    plt.plot(
+        np.expand_dims(range(0, np.shape(DEM)[1], 1), axis=0).T, DEMmean.T
+    )
     plt.show()
 
     onesMatrix = np.ones_like(DEM)
@@ -122,7 +128,9 @@ def Process(
             columns, rows = np.shape(rescaledDEM)
 
             outputName = toProcessPath + "rescaled_" + file[:-4] + ".txt"
-            writeFileTTGA(rescaledDEM, rows, columns, finalRes, finalRes, outputName)
+            writeFileTTGA(
+                rescaledDEM, rows, columns, finalRes, finalRes, outputName
+            )
 
             outputName = toProcessPath + "rescaled_" + file[:-4] + ".png"
             printDEM(rescaledDEM, dpi, outputName)
@@ -131,12 +139,11 @@ def Process(
                 print("subtracting mean value for file: " + file)
                 DEM = detrendDEM(rescaledDEM)
                 outputName = toProcessPath + "detrended_" + file[:-4] + ".txt"
-                writeFileTTGA(DEM, rows, columns, finalRes, finalRes, outputName)
+                writeFileTTGA(
+                    DEM, rows, columns, finalRes, finalRes, outputName
+                )
 
                 outputName = toProcessPath + "detrended_" + file[:-4] + ".png"
                 printDEM(DEM, dpi, outputName)
 
     return DEM
-
-
-

@@ -100,12 +100,18 @@ def makeFolder(postProcessPath, process):
 
 
 def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
-
+    print(np.shape(x_links))
+    min_x_links = np.min(x_links)
+    max_x_links = np.max(x_links)
+    min_y_links = np.min(y_links)
+    min_y_links = np.max(y_links)
+    print(w)
+    print(h)
     binaryPath = join(postProcessPath, "binary")
     binary = np.zeros((h, w))
 
     for x, y in zip(x_links, y_links):
-        binary[int(y - 1), int(x - 1)] = 1
+        binary[np.max(0,int(y - 1)), np.max(0,int(x - 1))] = 1
 
     height, width = np.shape(np.squeeze(binary))
     figsize = width / float(dpi), height / float(dpi)
@@ -152,7 +158,7 @@ def compute_nodes(links, Delta):
     return count_nodes, nodes
 
 
-def plot_network(DEMPath, postProcessPath, links, name, Delta, findNodes):
+def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
     # Read the .mat file and the DEM :
     # data = loadmat(networks)
     # networks = join(postProcessPath)
@@ -213,7 +219,7 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, findNodes):
         ncol=3,
     )
 
-    if findNodes:
+    if includeNodes:
         # print("entered nodes")
         count_nodes, Node = compute_nodes(links, Delta)
         for line in Node:
@@ -366,8 +372,8 @@ def plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath):
     for value in deltas:
         xToPlot = []
         yToPlot = []
-        print(value)
-        print(len(delta_nodes))
+        # print(value)
+        # print(len(delta_nodes))
         for i in range(0, len(delta_nodes)):
             if delta_nodes[i] == value:
                 xToPlot.append(file_names[i][:-4])
@@ -401,12 +407,18 @@ def postprocess(
     matfile,
     network,
     binary,
-    findNodes,
+    includeNodes,
     computeLength,
     plotVolume,
     plotNodeCount,
     Delta,
 ):
+    
+    links = []
+    count_nodes = []
+    coords_nodes = []
+    net_length = []
+    
     # Takes files from the Matfiles folder and apply the selected process
 
     # link_sequence_path = join(postProcessPath, "links_original")
@@ -422,16 +434,16 @@ def postprocess(
 
     # Load matfile with links details
     links, x_links, y_links = load_matfile(matfilesPath, file, Delta)
-    
-    print(np.shape(x_links))
-    print(np.shape(y_links))
+
+    # print(np.shape(x_links))
+    # print(np.shape(y_links))
     # Load DEM for plots
     DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
 
     if network:
         # print("execute plot network")
         count_nodes, coords_nodes = plot_network(
-            DEMpath, postProcessPath, links, file, Delta, findNodes
+            DEMpath, postProcessPath, links, file, Delta, includeNodes
         )
 
     if binary:
