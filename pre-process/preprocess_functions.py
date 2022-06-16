@@ -1,9 +1,11 @@
 # IMPORT ----------------------------------------------------------------------
-import os
+
 import rasterio
 from rasterio.enums import Resampling
 import numpy as np
 import matplotlib.pyplot as plt
+from os import listdir, mkdir
+from os.path import isfile, join, exists
 
 # FUNCTIONS -------------------------------------------------------------------
 def rescaleDEM(DEM, scaleFactor):
@@ -89,7 +91,7 @@ def detrendDEM(DEM):
     return DEM
 
 
-def Process(
+def DEM_preparation(
     originalDEMsPath,
     detrend,
     toProcessPath,
@@ -102,10 +104,10 @@ def Process(
 
     finalRes = originalRes * modelFactor / resolutionFactor
 
-    for file in os.listdir(originalDEMsPath):
+    for file in listdir(originalDEMsPath):
 
         if file.endswith(".tif"):
-            originalName = os.path.join(originalDEMsPath, file)
+            originalName = join(originalDEMsPath, file)
 
             src = rasterio.open(originalName)
 
@@ -147,3 +149,86 @@ def Process(
                 printDEM(DEM, dpi, outputName)
 
     return DEM
+
+def writeBash(
+    toProcessPath,
+    ttga_path,
+    algorithm,
+    delta,
+    Delta_list,
+    simplify,
+    hybridStriation,
+    xRES,
+    xRes,
+    yRES,
+    yRes,
+    minHEIGHT,
+    minHeight,
+    maxHEIGHT,
+    maxHeight,
+    ipe,
+    links,
+    boundary,
+    boundary_file_path,
+):
+
+    output_path = join(toProcessPath, "../output/links_original")
+
+    if not exists(output_path):
+        mkdir(output_path)
+
+    input_DEMs = [
+        f
+        for f in listdir(toProcessPath)
+        if isfile(join(toProcessPath, f)) and f.endswith(".txt")
+    ]
+
+    with open(join(toProcessPath, "bashProcess.sh"), "w") as rsh:
+        rsh.write("#! /bin/bash \n")
+
+        for DEM in reversed(input_DEMs):
+
+            # Writting the TTGA path
+            rsh.write(ttga_path + " ")
+
+            # Writting the options
+            if algorithm == False:
+                rsh.write("--a persistence" + " ")
+
+            if delta == False:
+                rsh.write("-d" + " " + Delta_list + " ")
+
+            if simplify == False:
+                rsh.write("-s" + " ")
+
+            if hybridStriation == False:
+                rsh.write("--hybridStriation" + " ")
+
+            if xRES == False:
+                rsh.write("--xRes" + " " + str(xRes) + " ")
+
+            if yRES == False:
+                rsh.write("--xRes" + " " + str(yRes) + " ")
+
+            if minHEIGHT == False:
+                rsh.write("--xRes" + " " + str(minHeight) + " ")
+
+            if maxHEIGHT == False:
+                rsh.write("--xRes" + " " + str(maxHeight) + " ")
+
+            if ipe == False:
+                rsh.write("--ipe" + " ")
+
+            if links == False:
+                rsh.write("--links" + " ")
+
+            if boundary == False:
+                rsh.write("--boundary" + " " + boundary_file_path + " ")
+
+            # Writting the input path
+            rsh.write(toProcessPath + DEM + " ")
+
+            # Writting the input path
+            name_DEM = "".join(x for x in DEM[:-4] if x not in ".")
+            rsh.write(join(output_path, str(name_DEM)))
+            rsh.write("\n")
