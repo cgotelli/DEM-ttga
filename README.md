@@ -1,10 +1,9 @@
 # DEM-ttga
 
-
 This code is for doing the pre- and post-treatment of laboratory-scale DEMs processed with the software **TTGA: Topological Tools for Geomorphological Analysis**. TTGA is a tool for Unix and Windows OS, which helps the analysis of river systems, in particular, braided rivers and estuaries. The focus of the tool is the computation of river networks from a digital elevation model (DEM) of the river bed. The software can be found in his original repository [here](https://github.com/tue-alga/ttga) or in [Zenodo](https://doi.org/10.5281/zenodo.3634684).  
 
 This code is divided in 3 main steps:
-- The preprocess of DEM files to get them ready for being processed with TTGA, and the preparation of the bash file for running TTGA for all the DEMs from console.
+- The preprocess of DEM files to get them ready for being processed with TTGA: resolution change and format conversion for being used with TTGA. Also the  preparation of the bash file for running all the DEMs in series from console.
 - Running the TTGA process from console.
 - The postprocess of TTGA output files. Several functions are available for computing different river network parameters (e.g. number of brances, number of nodes, etc.).  
 
