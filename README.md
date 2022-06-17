@@ -62,12 +62,15 @@ home/user/Documents/networkAnalysis/
 ```
 > :warning: **Important**: It is necessary to compile the TTGA's source code inside folder _ttga-software_. Based on the file structure shown above, after compiling, the executable of TTGA should be in the path: ```/home/user/Documents/networkAnalysis/ttga-software/build/src/gui/ttga```. This path is important for preparing the bash file afterwards.
 
-2. The file ```preprocess.py``` is in charge of the complete preprocess. With function **DEM_preparation** it first converts the ```*.tif``` files into the specific ```*.txt``` files for being used with TTGA. This function requires only the path where the original DEMs are stored, and automatically it creates a folder where to keep 
+2. The file ```preprocess.py``` is in charge of the complete preprocess. It requires only the path where the original DEMs are stored and the path of the executable ttga file (see the important note above for details). With function **DEM_preparation** it converts the ```*.tif``` DEMs into ```*.txt``` files with the specific format used by TTGA, and stores them in a new folder called _toProcess_ (see below the details of the final folder structure). It also writes a ```*.png``` version of the DEM to be used during the postprocess.
 
-It also creates the bash file ```bashProcess.sh``` and m
+The function also creates the bash file ```bashProcess.sh``` used for running TTGA on all the DEM files previously transformed from ```*.tif``` to ```*.txt```. 
 
-3. 
+3. The next step is to run TTGA from the Terminal(in UNIX) or Anaconda Prompt (in Windows). For that is necessary to run the code ```sh bashProcess.sh``` in the directory where the bash file was automatically stored. In the example we are using it would be the path ```/home/user/Documents/files/toProcess/```. The output ```*.txt``` files which contain all the detected links for each $\delta$ and each DEM file, are stored in a subfolder inside the folder _output_.
 
+4. The output files with the links are the base for the postprocess. The file ```postprocess.py``` has different functions for postprocessing the network. The detail of these functions can be found in the README file inside the _post-process_ folder.
+
+The final distribution of folders and files is can be found below.
 
 
 ```
@@ -79,7 +82,6 @@ home/user/Documents/networkAnalysis/
 │       ├── manual
 │       └── src
 │       
-│   
 ├───pre-process
 │       preprocess_functions.py
 │       preprocess.py
