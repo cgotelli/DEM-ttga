@@ -29,7 +29,7 @@ Inside the main folder of the repository we find three subfolders. The first con
 
 ## Using the code
 
-For using the code it is only necessary to have the all the original DEM files to process inside the same folder (in ```*.tif``` format), and to set a few parameters for the different steps. In this section we just explain the general steps for the entire process, whilst a more detailed explanation is given in the README file inside each process subfolder.  
+For using the code it is only necessary to have inside the same folder all the original DEM files to process (in ```*.tif``` format), and to set a few parameters for the different steps. In this section we just explain the general steps for the entire process, whilst a more detailed explanation is given in the README file inside the subfolder of each process.  
 
 The general steps are as follows:
 
@@ -43,29 +43,75 @@ home/user/Documents/networkAnalysis/
 │       ├── doc-images
 │       ├── manual
 │       └── src
-│       
-├───files
-│       └── originalDEMs
 │   
 ├───pre-process
 │       preprocess_functions.py
 │       preprocess.py
 │
-└───post-process
-        postprocess_functions.py
-        postprocess.py
+├───post-process
+│       postprocess_functions.py
+│       postprocess.py
+│
+└───files
+        └── originalDEMs
+                DEM_file01.tif
+                DEM_file02.tif
+                DEM_file03.tif
+                ...
 
 ```
-> :warning: **Important**: Based on the file structure shown above, the executable of TTGA should be in the path: ```/home/user/Documents/networkAnalysis/ttga-software/build/src/gui/ttga```. This path is important for preparing the bash file.
+> :warning: **Important**: It is necessary to compile the TTGA's source code inside folder _ttga-software_. Based on the file structure shown above, after compiling, the executable of TTGA should be in the path: ```/home/user/Documents/networkAnalysis/ttga-software/build/src/gui/ttga```. This path is important for preparing the bash file afterwards.
 
-2. The file ```preprocess.py``` is in charge of the complete preprocess. With function **DEM_preparation** it first converts ```*.tif``` files into the specific ```*.txt``` files formatted for being used with TTGA. This function requires only the path where the original DEMs are stored. Later, it automatically creates the bash file ```bashProcess.sh``` 
+2. The file ```preprocess.py``` is in charge of the complete preprocess. With function **DEM_preparation** it first converts the ```*.tif``` files into the specific ```*.txt``` files for being used with TTGA. This function requires only the path where the original DEMs are stored, and automatically it creates a folder where to keep 
 
+It also creates the bash file ```bashProcess.sh``` and m
 
-
-
-
-
+3. 
 
 
+
+```
+home/user/Documents/networkAnalysis/
+├───ttga-software
+│       ├── build
+│       ├── cmake
+│       ├── doc-images
+│       ├── manual
+│       └── src
+│       
+│   
+├───pre-process
+│       preprocess_functions.py
+│       preprocess.py
+│
+├───post-process
+│       postprocess_functions.py
+│       postprocess.py
+│        
+└───files
+        ├── originalDEMs
+        │       DEM_file01.tif
+        │       DEM_file02.tif
+        │       DEM_file03.tif
+        │       ...
+        │
+        ├── toProcess
+        │       bashProcess.sh
+        │       DEM_file01.png
+        │       DEM_file01.txt
+        │       DEM_file02.png
+        │       DEM_file02.txt
+        │       DEM_file03.png
+        │       DEM_file03.txt
+        │       ...
+        │
+        └── output
+                ├── links_original
+                ├── matfiles
+                ├── binary
+                ├── network
+                └── others
+
+```
 
 
