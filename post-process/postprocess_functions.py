@@ -155,10 +155,7 @@ def compute_nodes(links, Delta):
 
 
 def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
-    # Read the .mat file and the DEM :
-    # data = loadmat(networks)
-    # networks = join(postProcessPath)
-
+    
     # print(DEMPath)
     saveImgPath = join(postProcessPath, "..", "output", "network")
     # print(saveImgPath)
@@ -256,6 +253,48 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
         saveNetworkPath, dpi=dpi, transparent=False, bbox_inches="tight"
     )
     return count_nodes, nodes_coords
+
+
+### CHECK NAME OF FUNCTIONS.
+def get_nodes(DEMPath, postProcessPath, links, name, Delta):
+    
+    # Extract each column of the links matrix :
+    index_link = links[:, 0]
+    delta_link = links[:, 1]
+    x = links[:, 2]
+    y = links[:, 3]
+
+    # Create two arrays that will be used to plot each link :
+    X = []
+    Y = []
+
+
+    for i in range(1, len(x)):
+
+        # The same index value indicates the same link. We extract its coordinates :
+        if index_link[i] == index_link[i - 1]:
+            X.append(x[i])
+            Y.append(y[i])
+
+        else:
+            # If the index value change, we plot (X,Y) corresponding to the previous link :
+            if delta_link[i - 1] > Delta or delta_link[i - 1] == "inf":
+                lab = "delta=" + str("{:1.2f}".format(delta_link[i - 1]))
+                ax = plt.subplot(111)
+                ax.plot(X, Y, label=lab, linewidth=0.5)
+
+            # Then we reset X and Y
+            X = []
+            Y = []
+            X.append(x[i])
+            Y.append(y[i])
+
+
+    count_nodes, nodes_coords = compute_nodes(links, Delta)
+ 
+    return count_nodes, nodes_coords
+
+
 
 
 def list_matfiles(matfilesPath):
