@@ -74,15 +74,23 @@ def savemat_links(postProcessPath):
 
 
 def load_matfile(matfilesPath, name, Delta):
+    """Reads matfiles and filters according to delta threshold.
+
+    - Input: Path to matfiles, name of matfile, delta value for threshold
+    - Returns: links (original and filtered) and coordinates
+
+    Links array format: [link ID, delta Value, x-coord, y-coord]. Each row is
+    a point of a link.
+    """
     matfilePath = join(matfilesPath, name)
     links = loadmat(matfilePath)
-    links = links["links"]
+    links_original = links["links"]
 
-    links_filtered = links[links[:, 1] >= Delta]
+    links_filtered = links_original[links_original[:, 1] >= Delta]
 
     x_links = links_filtered[:, 2]
     y_links = links_filtered[:, 3]
-    return links, x_links, y_links
+    return links_original, links_filtered, x_links, y_links
 
 
 def load_background(postProcessPath, name):
@@ -129,7 +137,7 @@ def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
 
 
 def compute_nodes(links, Delta):
-    
+
     index_link = links[:, 0]
     delta_link = links[:, 1]
     x = links[:, 2]
@@ -144,18 +152,20 @@ def compute_nodes(links, Delta):
             index_link[i] != index_link[i - 1]
             or index_link[i] != index_link[i + 1]
         ):
-            nodes_coords = np.append(nodes_coords, np.array([[x[i], y[i]]]), axis=0)
-            
+            nodes_coords = np.append(
+                nodes_coords, np.array([[x[i], y[i]]]), axis=0
+            )
+
     nodes_coords = np.unique(nodes_coords, axis=0)
-    
+
     for line in nodes_coords:
         count_nodes += 1
-    
+
     return count_nodes, nodes_coords
 
 
 def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
-    
+
     # print(DEMPath)
     saveImgPath = join(postProcessPath, "..", "output", "network")
     # print(saveImgPath)
@@ -252,49 +262,6 @@ def plot_network(DEMPath, postProcessPath, links, name, Delta, includeNodes):
     fig.savefig(
         saveNetworkPath, dpi=dpi, transparent=False, bbox_inches="tight"
     )
-    return count_nodes, nodes_coords
-
-
-### CHECK NAME OF FUNCTIONS.
-def get_nodes(DEMPath, postProcessPath, links, name, Delta):
-    
-    # Extract each column of the links matrix :
-    index_link = links[:, 0]
-    delta_link = links[:, 1]
-    x = links[:, 2]
-    y = links[:, 3]
-
-    # Create two arrays that will be used to plot each link :
-    X = []
-    Y = []
-
-
-    for i in range(1, len(x)):
-
-        # The same index value indicates the same link. We extract its coordinates :
-        if index_link[i] == index_link[i - 1]:
-            X.append(x[i])
-            Y.append(y[i])
-
-        else:
-            # If the index value change, we plot (X,Y) corresponding to the previous link :
-            if delta_link[i - 1] > Delta or delta_link[i - 1] == "inf":
-                lab = "delta=" + str("{:1.2f}".format(delta_link[i - 1]))
-                ax = plt.subplot(111)
-                ax.plot(X, Y, label=lab, linewidth=0.5)
-
-            # Then we reset X and Y
-            X = []
-            Y = []
-            X.append(x[i])
-            Y.append(y[i])
-
-
-    count_nodes, nodes_coords = compute_nodes(links, Delta)
- 
-    return count_nodes, nodes_coords
-
-
 
 
 def list_matfiles(matfilesPath):
@@ -407,7 +374,7 @@ def plot_Networklength(
     fig.savefig(saveVolumePath, transparent=False, box_inches="tight")
 
 
-def plot_nodes(file_names, delta_nodes, count_nodes, postProcessPath):
+def plot_nodesEvolution(file_names, delta_nodes, count_nodes, postProcessPath):
 
     fig = plt.figure(figsize=(8, 6))
     plt.style.use("seaborn-white")
@@ -458,6 +425,7 @@ def postprocess(
     compute_length,
     plotVolume,
     plotNodeCount,
+    getMatrices,
     Delta,
 ):
 
@@ -465,6 +433,9 @@ def postprocess(
     count_nodes = []
     coords_nodes = []
     net_length = []
+    ordered_nodes = []
+    edges = []
+    extremeNodes = []
 
     # Takes files from the Matfiles folder and apply the selected process
 
@@ -480,7 +451,9 @@ def postprocess(
     print("- Processing with Delta " + str("{:1.2f}".format(Delta)))
 
     # Load matfile with links details
-    links, x_links, y_links = load_matfile(matfilesPath, file, Delta)
+    links_original, links_filtered, x_links, y_links = load_matfile(
+        matfilesPath, file, Delta
+    )
 
     # print(np.shape(x_links))
     # print(np.shape(y_links))
@@ -489,22 +462,86 @@ def postprocess(
 
     if network:
         # print("execute plot network")
-        count_nodes, coords_nodes = plot_network(
-            DEMpath, postProcessPath, links, file, Delta, includeNodes
+        count_nodes, coords_nodes = compute_nodes(links_original, Delta)
+        plot_network(
+            DEMpath, postProcessPath, links_original, file, Delta, includeNodes
         )
 
     if binary:
         make_binary(w, h, x_links, y_links, postProcessPath, file, Delta)
 
     if compute_length:
-        net_length = network_length(links, Delta)
+        net_length = network_length(links_original, Delta)
 
+    if getMatrices:
+        ordered_nodes, edges, extremeNodes = compute_matrices(
+            links_filtered, count_nodes, coords_nodes, Delta
+        )
     # plot_nodes(nodes)
 
-    return links, count_nodes, coords_nodes, net_length
+    return (
+        links_original,
+        links_filtered,
+        count_nodes,
+        coords_nodes,
+        net_length,
+        ordered_nodes,
+        edges,
+        extremeNodes,
+    )
 
 
-def compute_matrices(links):
+def compute_matrices(links_filtered, count_nodes, coords_nodes, Delta):
+    ordered_nodes = []
+    edges = []
+    extremeNodes = []
+
+    # Separate link matrix
+    index_link = links_filtered[:, 0]
+    delta_link = links_filtered[:, 1]
+    xcoords = links_filtered[:, 2]
+    ycoords = links_filtered[:, 3]
+    print(coords_nodes)
+    
+    
+    LinkCount = int(np.max(index_link) + 1)
+    
+    for i in range(0, count_nodes):
+        firstPointx = xcoords[index_link == i][0]
+        firstPointy = ycoords[index_link == i][0]
+        firstPoint = [firstPointx, firstPointy]
+        print(count_nodes)
+        
+
+
+
+
+
+    # LinkCount = int(np.max(index_link) + 1)
     
 
-    return
+    # for i in range(0, LinkCount):
+    #     # Obtain extremes
+    #     # start point
+    #     firstPointx = xcoords[index_link == i][0]
+    #     firstPointy = ycoords[index_link == i][0]
+    #     # end point
+    #     finalPointx = xcoords[index_link == i][-1]
+    #     finalPointy = ycoords[index_link == i][-1]
+
+    #     extremeNodes.append(
+    #         [i, firstPointx, firstPointy, finalPointx, finalPointy]
+    #     )  # [index, xcoords, ycoords ]
+
+    # for row in extremeNodes:
+    #     print(row[1], row[2])
+    #     print(ordered_nodes)
+
+    #     if [row[1],row[2]] not in ordered_nodes:
+    #     # if not set([row[1], row[2]]).issubset(set(ordered_nodes)):
+    #     # if all([row[1] not in ordered_nodes[0], row[2] not in ordered_nodes[1]]):
+    #         print(row[1], row[2])
+    #         ordered_nodes.append([row[1],row[2]])
+    # print(ordered_nodes)
+
+    return ordered_nodes, edges, extremeNodes
