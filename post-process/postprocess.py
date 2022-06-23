@@ -9,7 +9,7 @@ postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [1]
+deltas = [0.1]
 
 count_nodes = []  # Number of nodes per network (delta)
 coords_nodes = []  # List of coordinates for each per network
@@ -27,9 +27,9 @@ plotNetwork = True  # Plot DEM with
 plotBinary = True  # Plot
 includeNodes = True  # Include nodes in network graph
 plotNodeCount = True  # Plot total number of nodes in time. If True, "plotNetwork" must be True
-computeLength = False
-plotLenght = False  # To plot network length in time. If True, "computeLength" must be True
-plotVolume = False
+computeLength = True
+plotLenght = True  # To plot network length in time. If True, "computeLength" must be True
+plotVolume = True
 getMatrices = True  # Directed graphs matrices
 
 # ------------------------------- PROCESS -------------------------------------

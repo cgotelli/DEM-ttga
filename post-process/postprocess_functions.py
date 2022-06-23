@@ -429,7 +429,7 @@ def postprocess(
     Delta,
 ):
 
-    links = []
+    
     count_nodes = []
     coords_nodes = []
     net_length = []
@@ -474,9 +474,12 @@ def postprocess(
         net_length = network_length(links_original, Delta)
 
     if getMatrices:
-        ordered_nodes, edges, extremeNodes = compute_matrices(
-            links_filtered, count_nodes, coords_nodes, Delta
+        # get edges for function using package networkx
+        edges = get_edges(
+            links_filtered, coords_nodes	
         )
+        #
+        make_network(coords_nodes, edges, h)
     # plot_nodes(nodes)
 
     return (
@@ -490,58 +493,77 @@ def postprocess(
         extremeNodes,
     )
 
+def get_index_positions(list_of_elems, element):
+    ''' Returns the indexes of all occurrences of give element in
+    the list- listOfElements '''
+    index_pos_list = []
+    index_pos = 0
+    while True:
+        try:
+            # Search for item in list from indexPos to the end of list
+            index_pos = list_of_elems.index(element, index_pos)
+            # Add the index position in list
+            index_pos_list.append(index_pos)
+            index_pos += 1
+        except ValueError as e:
+            break
+    return index_pos_list
 
-def compute_matrices(links_filtered, count_nodes, coords_nodes, Delta):
-    ordered_nodes = []
+
+def get_edges(links_filtered, coords_nodes):
     edges = []
-    extremeNodes = []
-
+    
     # Separate link matrix
     index_link = links_filtered[:, 0]
-    delta_link = links_filtered[:, 1]
-    xcoords = links_filtered[:, 2]
-    ycoords = links_filtered[:, 3]
-    print(coords_nodes)
-    
-    
-    LinkCount = int(np.max(index_link) + 1)
-    
-    for i in range(0, count_nodes):
-        firstPointx = xcoords[index_link == i][0]
-        firstPointy = ycoords[index_link == i][0]
-        firstPoint = [firstPointx, firstPointy]
-        print(count_nodes)
         
-
-
-
-
-
-    # LinkCount = int(np.max(index_link) + 1)
+    linksxcoords = links_filtered[:, 2]
+    linksycoords = links_filtered[:, 3]
     
+    nodesxcoords = coords_nodes[:,0]
+    nodesycoords = coords_nodes[:,1]
+    
+    
+    # print(coords_nodes)
 
-    # for i in range(0, LinkCount):
-    #     # Obtain extremes
-    #     # start point
-    #     firstPointx = xcoords[index_link == i][0]
-    #     firstPointy = ycoords[index_link == i][0]
-    #     # end point
-    #     finalPointx = xcoords[index_link == i][-1]
-    #     finalPointy = ycoords[index_link == i][-1]
+    LinkCount = int(np.max(index_link) + 1)
 
-    #     extremeNodes.append(
-    #         [i, firstPointx, firstPointy, finalPointx, finalPointy]
-    #     )  # [index, xcoords, ycoords ]
+    for i in range(0, LinkCount):
+        # Obtain extremes
+        # start point
+        firstPointx = linksxcoords[index_link == i][0]
+        firstPointy = linksycoords[index_link == i][0]
+        
+        firstPointIndecesX = get_index_positions(list(nodesxcoords), firstPointx)
+        firstPointIndecesY = get_index_positions(list(nodesycoords), firstPointy)
+        firstPointIndex  = list(set(firstPointIndecesX).intersection(firstPointIndecesY))
+        
+        # end point
+        finalPointx = linksxcoords[index_link == i][-1]
+        finalPointy = linksycoords[index_link == i][-1]
+        
+        finalPointIndecesX = get_index_positions(list(nodesxcoords), finalPointx)
+        finalPointIndecesY = get_index_positions(list(nodesycoords), finalPointy)
+        finalPointIndex  = list(set(finalPointIndecesX).intersection(finalPointIndecesY))
+            
+                        
+        edges.append([firstPointIndex, finalPointIndex])
+        
+    
+    edges = np.squeeze(edges)    
+    print(edges)
 
-    # for row in extremeNodes:
-    #     print(row[1], row[2])
-    #     print(ordered_nodes)
+    return edges
 
-    #     if [row[1],row[2]] not in ordered_nodes:
-    #     # if not set([row[1], row[2]]).issubset(set(ordered_nodes)):
-    #     # if all([row[1] not in ordered_nodes[0], row[2] not in ordered_nodes[1]]):
-    #         print(row[1], row[2])
-    #         ordered_nodes.append([row[1],row[2]])
-    # print(ordered_nodes)
-
-    return ordered_nodes, edges, extremeNodes
+def make_network(coords_nodes, edges, h):
+    import networkx as nx
+    G = nx.DiGraph()
+    
+    for i in range(0,len(coords_nodes)):
+        G.add_node(i, pos=(coords_nodes[i][0], h- coords_nodes[i][1]))
+    
+    pos = nx.get_node_attributes(G,'pos')
+    G.add_edges_from(edges)
+    nx.draw(G,pos, with_labels=True)
+    plt.axis("on")
+    plt.show()
+    return
