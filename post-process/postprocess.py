@@ -9,7 +9,7 @@ postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [0.1]
+deltas = [0.02]
 
 count_nodes = []  # Number of nodes per network (delta)
 coords_nodes = []  # List of coordinates for each per network
@@ -27,9 +27,9 @@ plotNetwork = True  # Plot DEM with
 plotBinary = True  # Plot
 includeNodes = True  # Include nodes in network graph
 plotNodeCount = True  # Plot total number of nodes in time. If True, "plotNetwork" must be True
-computeLength = True
-plotLenght = True  # To plot network length in time. If True, "computeLength" must be True
-plotVolume = True
+computeLength = False  
+totalLength = False  # To plot network length in time. If True, "computeLength" must be True
+plotDeltavsLength = False
 getMatrices = True  # Directed graphs matrices
 
 # ------------------------------- PROCESS -------------------------------------
@@ -67,10 +67,11 @@ for file in files:
             plotBinary,
             includeNodes,
             computeLength,
-            plotVolume,
+            plotDeltavsLength,
             plotNodeCount,
             getMatrices,
             Delta,
+            totalLength
         )
 
         count_nodes.append(count_nodesi)
@@ -82,8 +83,8 @@ for file in files:
         edges.append(edgesi)
         extremeNodes.append(extremeNodesi)
 
-    if plotVolume:
-        pp.plot_volume_length(links_original, postProcessPath, file)
+    if plotDeltavsLength:
+        pp.plot_deltavslength(links_original, postProcessPath, file)
 
 if plotNodeCount:
     print("Here we print the nodes graph evolution")
@@ -91,8 +92,8 @@ if plotNodeCount:
         file_names, delta_nodes, count_nodes, postProcessPath
     )
 
-if plotLenght:
+if totalLength:
     print("Here we print the network length evolution")
-    pp.plot_Networklength(
+    pp.plot_NetworkTotalLength(
         file_names, delta_nodes, network_length, postProcessPath
     )

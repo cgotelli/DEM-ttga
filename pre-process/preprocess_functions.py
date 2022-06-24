@@ -25,7 +25,8 @@ def rescaleDEM(DEM, scaleFactor):
 
 def printDEM(im_data, dpi, name):
     minValue = np.nanmin(im_data)
-    maxValue = np.nanmax(im_data[im_data != np.nanmax(im_data)])
+    maxValue = np.nanmax(im_data[im_data != 32767])
+    # maxValue = np.nanmax(im_data[im_data != np.nanmax(im_data)])
 
     height, width = np.shape(np.squeeze(im_data))
     figsize = width / float(dpi), height / float(dpi)
@@ -103,8 +104,13 @@ def DEM_preparation(
 ):
 
     finalRes = originalRes * modelFactor / resolutionFactor
-
-    for file in listdir(originalDEMsPath):
+    files = sorted(listdir(originalDEMsPath))
+    
+    if not exists(toProcessPath):
+        mkdir(toProcessPath)
+        
+    
+    for file in files:
 
         if file.endswith(".tif"):
             originalName = join(originalDEMsPath, file)
@@ -124,7 +130,7 @@ def DEM_preparation(
                 )
 
             rescaledDEM = rescaleDEM(src, resolutionFactor)
-            rescaledDEM[rescaledDEM == -32767] = np.float32("nan")
+            rescaledDEM[rescaledDEM == -32767] = np.float32(32767)
             rescaledDEM = np.matrix(np.squeeze(rescaledDEM))
             DEM = rescaledDEM * modelFactor
             columns, rows = np.shape(rescaledDEM)
@@ -171,11 +177,15 @@ def writeBash(
     boundary,
     boundary_file_path,
 ):
-
-    output_path = join(toProcessPath, "../output/links_original")
+    
+    output_path = join(toProcessPath, "..","output")
+    links_path = join(toProcessPath, "..","output/links_original")
 
     if not exists(output_path):
         mkdir(output_path)
+        
+    if not exists(links_path):
+        mkdir(links_path)
 
     input_DEMs = [
         f
@@ -230,5 +240,5 @@ def writeBash(
 
             # Writting the input path
             name_DEM = "".join(x for x in DEM[:-4] if x not in ".")
-            rsh.write(join(output_path, str(name_DEM)))
+            rsh.write(join(links_path, str(name_DEM)))
             rsh.write("\n")

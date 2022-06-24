@@ -1,4 +1,5 @@
-import DEM_functions_ttga as df
+import preprocess_functions as df
+import os
 
 # --------------------------------- PATHS -------------------------------------
 # Path where the original DEMs are stored
@@ -9,8 +10,10 @@ ttga_path = "/home/cgotelli/Documents/ttga_software/build/src/gui/ttga"
 # ---------------------- DEM preparation parameters ---------------------------
 originalRes = 0.0004  # Meters per pixel in original DEMs
 resolutionFactor = 1 / 10  # Factor to increase/decrease DEM resolution
-modelFactor = 30  # Scale between model and prototype. Set 1 for real size DEMs.
-dpi = 900 # Image quality
+modelFactor = (
+    30  # Scale between model and prototype. Set 1 for real size DEMs.
+)
+dpi = 900  # Image quality
 orig = False  # Convert or not the original resolution DEM to TTGA-txt input
 detrend = True  # Remove mean value
 
@@ -45,7 +48,7 @@ boundary_file_path = ""
 
 # --------------------------------- TTGA --------------------------------------
 
-toProcessPath = originalDEMsPath + "/../toProcess/"
+toProcessPath = os.path.join(originalDEMsPath, "..","toProcess/")
 
 DEM = df.DEM_preparation(
     originalDEMsPath,
