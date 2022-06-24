@@ -31,6 +31,7 @@ computeLength = False
 totalLength = False  # To plot network length in time. If True, "computeLength" must be True
 plotDeltavsLength = False
 getMatrices = True  # Directed graphs matrices
+directed = True
 
 # ------------------------------- PROCESS -------------------------------------
 # We transform to matfile the links *.txt file.
@@ -69,7 +70,7 @@ for file in files:
             computeLength,
             plotDeltavsLength,
             plotNodeCount,
-            getMatrices,
+            getMatrices,directed,
             Delta,
             totalLength
         )
