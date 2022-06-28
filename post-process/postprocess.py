@@ -9,7 +9,7 @@ postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [0.02]
+deltas = [0.1, 0.5]
 
 count_nodes = []  # Number of nodes per network (delta)
 coords_nodes = []  # List of coordinates for each per network
@@ -26,12 +26,13 @@ saveMat = False  # Transform links' .txt files to .mat
 plotNetwork = True  # Plot DEM with
 plotBinary = True  # Plot
 includeNodes = True  # Include nodes in network graph
-plotNodeCount = True  # Plot total number of nodes in time. If True, "plotNetwork" must be True
-computeLength = False  
+# Plot total number of nodes in time. If True, "plotNetwork" must be True
+plotNodeCount = True
+computeLength = True
 totalLength = False  # To plot network length in time. If True, "computeLength" must be True
 plotDeltavsLength = False
 getMatrices = True  # Directed graphs matrices
-directed = True
+directed = False
 
 # ------------------------------- PROCESS -------------------------------------
 # We transform to matfile the links *.txt file.
@@ -70,9 +71,10 @@ for file in files:
             computeLength,
             plotDeltavsLength,
             plotNodeCount,
-            getMatrices,directed,
+            getMatrices,
+            directed,
             Delta,
-            totalLength
+            totalLength,
         )
 
         count_nodes.append(count_nodesi)

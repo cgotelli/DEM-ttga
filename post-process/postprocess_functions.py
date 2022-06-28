@@ -129,75 +129,70 @@ def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
             name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_binary.png"
         ),
     )
-    fig.savefig(saveBinaryPath, dpi=dpi, transparent=False, bbox_inches="tight")
+    fig.savefig(
+        saveBinaryPath, dpi=dpi, transparent=False, bbox_inches="tight"
+    )
 
     plt.show()
 
     return binary
 
 
-def get_nodes(links_filtered):
-    
+def get_nodes(links_filtered, w, h):
+
     nodes_coords = []
-    
+
     # Separate link matrix
     index_link = links_filtered[:, 0]
-        
+
     linksxcoords = links_filtered[:, 2]
     linksycoords = links_filtered[:, 3]
-    
-    # print(coords_nodes)
 
     LinkCount = int(np.max(index_link) + 1)
 
     for i in range(0, LinkCount):
         # Obtain extremes
         # start point
-        firstPointx = linksxcoords[index_link == i][1]
-        firstPointy = linksycoords[index_link == i][1]
+        firstPointx = linksxcoords[index_link == i][0]
+        if firstPointx == -1 or firstPointx == w:
+            firstPointx = linksxcoords[index_link == i][1]
+            firstPointy = linksycoords[index_link == i][1]
+        else:
+            firstPointy = linksycoords[index_link == i][0]
+
         nodes_coords.append([firstPointx, firstPointy])
-        
+
         # end point
-        finalPointx = linksxcoords[index_link == i][-2]
-        finalPointy = linksycoords[index_link == i][-2]
-                        
+        finalPointx = linksxcoords[index_link == i][-1]
+
+        if finalPointx == -1 or finalPointx == w:
+            finalPointx = linksxcoords[index_link == i][-2]
+            finalPointy = linksycoords[index_link == i][-2]
+        else:
+            finalPointy = linksycoords[index_link == i][-1]
+
         nodes_coords.append([finalPointx, finalPointy])
-    
+
     nodes_coords = np.unique(nodes_coords, axis=0)
     count_nodes = int(len(nodes_coords))
-
-    # index_link = links[:, 0]
-    # delta_link = links[:, 1]
-    # x = links[:, 2]
-    # y = links[:, 3]
-    # nodes_coords = np.empty([0, 2])
-    # count_nodes = 0
-    # d = 0
-    # while delta_link[d] >= Delta or delta_link[d] == "inf":
-    #     d += 1
-    # for i in range(0, d):
-    #     if (
-    #         index_link[i] != index_link[i - 1]
-    #         or index_link[i] != index_link[i + 1]
-    #     ):
-    #         nodes_coords = np.append(
-    #             nodes_coords, np.array([[x[i], y[i]]]), axis=0
-    #         )
-            
-    # nodes_coords = np.unique(nodes_coords, axis=0)
-
-    # for line in nodes_coords:
-    #     count_nodes += 1
 
     return count_nodes, nodes_coords
 
 
-def plot_network(DEMPath, postProcessPath, links_original, links_filtered, name, Delta, includeNodes):
+def plot_network(
+    DEMPath,
+    postProcessPath,
+    links_original,
+    links_filtered,
+    name,
+    Delta,
+    includeNodes,
+    w,
+    h,
+):
     # Sonke, 2022.
-    
-    # print(DEMPath)
+
     saveImgPath = join(postProcessPath, "..", "output", "network")
-    # print(saveImgPath)
 
     img = cv2.imread(DEMPath)
 
@@ -227,7 +222,8 @@ def plot_network(DEMPath, postProcessPath, links_original, links_filtered, name,
         else:
             # If the index value change, we plot (X,Y) corresponding to the previous link :
             if delta_link[i - 1] > Delta or delta_link[i - 1] == "inf":
-                lab = "delta=" + str("{:1.2f}".format(delta_link[i - 1]))
+                # lab = "delta=" + str("{:1.2f}".format(delta_link[i - 1]))
+                lab = "index=" + str(int(index_link[i - 1]))
                 ax = plt.subplot(111)
                 ax.plot(X[2:-2], Y[2:-2], label=lab, linewidth=0.5)
 
@@ -251,9 +247,8 @@ def plot_network(DEMPath, postProcessPath, links_original, links_filtered, name,
         ncol=4,
         fontsize=5,
     )
-    count_nodes, nodes_coords = get_nodes(links_filtered)
+    count_nodes, nodes_coords = get_nodes(links_filtered, w, h)
     if includeNodes:
-        # print("entered nodes")
 
         for line in nodes_coords:
             plt.scatter(line[0], line[:][1], color="red", s=5)
@@ -406,7 +401,7 @@ def plot_NetworkTotalLength(
 
 def plot_nodesEvolution(file_names, delta_nodes, count_nodes, postProcessPath):
     # Sonke, 2022.
-    
+
     fig = plt.figure(figsize=(8, 6))
     plt.style.use("seaborn-white")
     # For each delta value,  we plot the network lenght for all DEMs
@@ -415,8 +410,7 @@ def plot_nodesEvolution(file_names, delta_nodes, count_nodes, postProcessPath):
     for value in deltas:
         xToPlot = []
         yToPlot = []
-        # print(value)
-        # print(len(delta_nodes))
+
         for i in range(0, len(delta_nodes)):
             if delta_nodes[i] == value:
                 xToPlot.append(file_names[i][:-4])
@@ -456,12 +450,12 @@ def postprocess(
     compute_length,
     plotDeltavsLength,
     plotNodeCount,
-    getMatrices,directed,
+    getMatrices,
+    directed,
     Delta,
-    totalLength
+    totalLength,
 ):
 
-    
     count_nodes = []
     coords_nodes = []
     net_length = []
@@ -470,8 +464,6 @@ def postprocess(
     extremeNodes = []
 
     # Takes files from the Matfiles folder and apply the selected process
-
-    # link_sequence_path = join(postProcessPath, "links_original")
 
     if network:
         makeFolder(postProcessPath, "network")
@@ -487,16 +479,22 @@ def postprocess(
         matfilesPath, file, Delta
     )
 
-    # print(np.shape(x_links))
-    # print(np.shape(y_links))
     # Load DEM for plots
     DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
 
     if network:
-        # print("execute plot network")
-        count_nodes, coords_nodes = get_nodes(links_filtered)
+
+        count_nodes, coords_nodes = get_nodes(links_filtered, w, h)
         plot_network(
-            DEMpath, postProcessPath, links_original, links_filtered, file, Delta, includeNodes
+            DEMpath,
+            postProcessPath,
+            links_original,
+            links_filtered,
+            file,
+            Delta,
+            includeNodes,
+            w,
+            h,
         )
 
     if binary:
@@ -507,12 +505,9 @@ def postprocess(
 
     if getMatrices:
         # get edges for function using package networkx
-        edges = get_edges(
-            links_filtered, coords_nodes	
-        )
+        edges = get_edges(links_filtered, coords_nodes, w, h)
         #
-        make_network(coords_nodes, edges, h, directed)
-    # plot_nodes(nodes)
+        make_network(coords_nodes, edges, w, h, directed)
 
     return (
         links_original,
@@ -525,9 +520,10 @@ def postprocess(
         extremeNodes,
     )
 
+
 def get_index_positions(list_of_elems, element):
-    ''' Returns the indexes of all occurrences of give element in
-    the list- listOfElements '''
+    """Returns the indexes of all occurrences of give element in
+    the list- listOfElements"""
     index_pos_list = []
     index_pos = 0
     while True:
@@ -542,96 +538,71 @@ def get_index_positions(list_of_elems, element):
     return index_pos_list
 
 
-def get_edges(links_filtered, coords_nodes):
+def get_edges(links_filtered, coords_nodes, w, h):
     edges = []
-    edge = []
+
     # Separate link matrix
     index_link = links_filtered[:, 0]
-        
+
     linksxcoords = links_filtered[:, 2]
     linksycoords = links_filtered[:, 3]
-    
-    nodesxcoords = np.array(coords_nodes)[:,0]
-    nodesycoords = np.array(coords_nodes)[:,1]
-    
-    
-    # print(coords_nodes)
+
+    nodesxcoords = np.array(coords_nodes)[:, 0]
+    nodesycoords = np.array(coords_nodes)[:, 1]
 
     LinkCount = int(np.max(index_link) + 1)
 
     for i in range(0, LinkCount):
-        
+        edge = []
         linkxpoints = linksxcoords[index_link == i]
         linkypoints = linksycoords[index_link == i]
-        
+
         for j in range(0, len(linkxpoints)):
-        
+
             xpoint = linkxpoints[j]
             ypoint = linkypoints[j]
-            
+
             xindex = get_index_positions(list(nodesxcoords), xpoint)
             yindex = get_index_positions(list(nodesycoords), ypoint)
-            
-            intersect  = list(set(xindex).intersection(yindex))
+
+            intersect = list(set(xindex).intersection(yindex))
             print(intersect)
-            if len(intersect)!=0: #If the point is a node
-                if len(edge)==0:
-                    edge.append([intersect])
-                    print("hola")
-                elif len(edge)==1:
-                    edge = [edge,intersect]
+            if len(intersect) != 0:  # If the point is a node
+                if len(edge) == 0:
+                    edge.append(intersect)
+
+                elif len(edge) == 1:
+                    edge = np.squeeze(np.array([edge[0], intersect]))
+
                     edges.append(edge)
-                    edge = []
-                    
-                    
-                
-            
-            
-            
-        # Obtain extremes
-        # start point
-        # firstPointx = linksxcoords[index_link == i][1]
-        # firstPointy = linksycoords[index_link == i][1]
-        
-        # firstPointIndecesX = get_index_positions(list(nodesxcoords), firstPointx)
-        # firstPointIndecesY = get_index_positions(list(nodesycoords), firstPointy)
-        # firstPointIndex  = list(set(firstPointIndecesX).intersection(firstPointIndecesY))
-        
-        # # end point
-        # finalPointx = linksxcoords[index_link == i][-2]
-        # finalPointy = linksycoords[index_link == i][-2]
-        
-        # finalPointIndecesX = get_index_positions(list(nodesxcoords), finalPointx)
-        # finalPointIndecesY = get_index_positions(list(nodesycoords), finalPointy)
-        # finalPointIndex  = list(set(finalPointIndecesX).intersection(finalPointIndecesY))
-            
-                        
-        # edges.append([firstPointIndex, finalPointIndex])
-        
-    
-    # edges = np.squeeze(edges)    
-    # print(edges)
+
+                    edge = [intersect]
 
     return edges
 
-def make_network(coords_nodes, edges, h, directed):
+
+def make_network(coords_nodes, edges, w, h, directed):
     import networkx as nx
+
     if directed:
         G = nx.DiGraph()
     else:
         G = nx.Graph()
-    
-    for i in range(0,len(coords_nodes)):
-        G.add_node(i, pos=(coords_nodes[i][0], h- coords_nodes[i][1]))
-    
-    pos = nx.get_node_attributes(G,'pos')
-    
-    if len(pos)>2:
+
+    for i in range(0, len(coords_nodes)):
+        G.add_node(i, pos=(coords_nodes[i][0], h - coords_nodes[i][1]))
+
+    pos = nx.get_node_attributes(G, "pos")
+
+    if len(pos) > 2:
         G.add_edges_from(edges)
     else:
-        G.add_edge(edges[0],edges[1])
-        
-    nx.draw(G,pos, with_labels=True)
-    plt.axis("on")
+        G.add_edge(edges[0][0], edges[0][1])
+
+    nx.draw(G, pos, with_labels=True)
+    plt.axis("off")
+    plt.xlim([-50, w + 50])
+    plt.ylim([-50, h + 50])
     plt.show()
+
     return
