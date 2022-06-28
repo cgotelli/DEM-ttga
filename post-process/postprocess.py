@@ -1,6 +1,7 @@
 # -------------------------------- IMPORT -------------------------------------
 import postprocess_functions as pp
 from os.path import join
+import numpy as np
 
 # ------------------------------ PARAMETERS -----------------------------------
 # Path for output folder where links files are stored
@@ -9,7 +10,11 @@ postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [0.1, 0.5]
+deltas = [0.5]
+smoothWindow = 30
+choice = "all"  # or 'all'
+columns_selected = [5, 151, 500]
+
 
 count_nodes = []  # Number of nodes per network (delta)
 coords_nodes = []  # List of coordinates for each per network
@@ -22,23 +27,32 @@ extremeNodes = []
 
 # ------------------------------- BOOLEANS ------------------------------------
 # Booleans for appyling (or not) the different processes
+
 saveMat = False  # Transform links' .txt files to .mat
 plotNetwork = True  # Plot DEM with
-plotBinary = True  # Plot
+plotBinary = True  # Plot binary image
+smoothChannels = True  # For smoothing channel network
 includeNodes = True  # Include nodes in network graph
 # Plot total number of nodes in time. If True, "plotNetwork" must be True
 plotNodeCount = True
 computeLength = True
-totalLength = False  # To plot network length in time. If True, "computeLength" must be True
+# To plot network length in time. If True, "computeLength" must be True
+plotTotalLength = False  
 plotDeltavsLength = False
 getMatrices = True  # Directed graphs matrices
-directed = False
+directedGraphs = False
+saveGraphs = True
+computeBraidingIndex = True
+
 
 # ------------------------------- PROCESS -------------------------------------
 # We transform to matfile the links *.txt file.
 if saveMat:
     pp.makeFolder(postProcessPath, "matfiles")
     pp.savemat_links(postProcessPath)
+
+if saveGraphs:
+    pp.makeFolder(postProcessPath, "graphs")
 
 # List of matfiles inside matfilesPath directory
 files = pp.list_matfiles(matfilesPath)
@@ -48,7 +62,7 @@ files = sorted(files)  # Sort by name
 # For each DEM file we apply the processes defined above
 for file in files:
 
-    print("Beginning postproces for file: " + file)
+    print("***** Beginning postproces for file: " + file)
     for Delta in deltas:
 
         (
@@ -72,9 +86,12 @@ for file in files:
             plotDeltavsLength,
             plotNodeCount,
             getMatrices,
-            directed,
+            saveGraphs,
+            directedGraphs,
             Delta,
-            totalLength,
+            plotTotalLength,
+            smoothChannels,
+            smoothWindow,
         )
 
         count_nodes.append(count_nodesi)
@@ -90,13 +107,27 @@ for file in files:
         pp.plot_deltavslength(links_original, postProcessPath, file)
 
 if plotNodeCount:
-    print("Here we print the nodes graph evolution")
+    print("***** Print the number of nodes in time *****")
     pp.plot_nodesEvolution(
         file_names, delta_nodes, count_nodes, postProcessPath
     )
 
-if totalLength:
-    print("Here we print the network length evolution")
+if plotTotalLength:
+    print("***** Print the network length evolution *****")
     pp.plot_NetworkTotalLength(
         file_names, delta_nodes, network_length, postProcessPath
     )
+
+if computeBraidingIndex:
+    print("***** Braiding index computation and store in Matfile *****")
+    binaryFolder = join(postProcessPath, 'binary')
+    files = pp.list_png(binaryFolder)
+
+    files = sorted(files)  # Sort by name
+    BImatrix = []
+    # For each DEM file we apply the processes defined above
+    for file in files:
+        # print(file)
+        binaryFile = join(binaryFolder, file)
+        BIvalue = pp.computeBI(binaryFile, choice, columns_selected)
+        BImatrix.append([file, BIvalue])
