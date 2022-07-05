@@ -973,7 +973,6 @@ def links_elevations(DEM, links_original, Delta):
 
     return links_elevations
 
-
 # ---------------------- Distributions of the elevations --------------------------
 def elevation_distributions(elevations, choice):
     # To choose the plot, modify 'choice' which can be :
