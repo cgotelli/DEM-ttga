@@ -19,10 +19,7 @@ dpi = 300
 def savemat_links(postProcessPath):
 
     link_sequence_path = join(postProcessPath, "links_original")
-    print(
-        "Converting links inside this directory to matfile: "
-        + link_sequence_path
-    )
+    print("Converting links inside this directory to matfile: " + link_sequence_path)
     # List all the link sequences in the path indicated
     files = [
         f
@@ -74,9 +71,7 @@ def savemat_links(postProcessPath):
 
         # Save in a .mat file
         save_path = join(postProcessPath, "matfiles")
-        savemat(
-            join(save_path, str(link_sequence[:-4] + ".mat")), {"links": link}
-        )
+        savemat(join(save_path, str(link_sequence[:-4] + ".mat")), {"links": link})
 
 
 def load_matfile(matfilesPath, name, Delta):
@@ -131,14 +126,12 @@ def make_binary(w, h, x_links, y_links, postProcessPath, name, Delta):
 
     saveBinaryPath = join(
         binaryPath,
-        str(
-            name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_binary.png"
-        ),
+        str(name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_binary.png"),
     )
     # fig.savefig(
     #     saveBinaryPath, dpi=dpi, transparent=False, bbox_inches="tight"
-    plt.imsave(saveBinaryPath,binary)
-    
+    plt.imsave(saveBinaryPath, binary)
+
     plt.show()
 
     return binary
@@ -242,9 +235,7 @@ def plot_network(
     ax.imshow(img)
 
     box = ax.get_position()
-    ax.set_position(
-        [box.x0, box.y0 + box.height * 0.2, box.width, box.height * 0.8]
-    )
+    ax.set_position([box.x0, box.y0 + box.height * 0.2, box.width, box.height * 0.8])
     ax.legend(
         loc="upper center",
         bbox_to_anchor=(0.5, -0.05),
@@ -269,10 +260,7 @@ def plot_network(
             )
     else:
         fig.suptitle(
-            "networks "
-            + r"$\delta_{lim}=$"
-            + " "
-            + str("{:1.1f}".format(Delta)),
+            "networks " + r"$\delta_{lim}=$" + " " + str("{:1.1f}".format(Delta)),
             fontsize=5,
         )
     plt.axis("off")
@@ -281,34 +269,25 @@ def plot_network(
 
     saveNetworkPath = join(
         saveImgPath,
-        str(
-            name[:-4]
-            + "_Delta"
-            + str("{:1.2f}".format(Delta))
-            + "_network.png"
-        ),
+        str(name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_network.png"),
     )
 
-    fig.savefig(
-        saveNetworkPath, dpi=dpi, transparent=False, bbox_inches="tight"
-    )
+    fig.savefig(saveNetworkPath, dpi=dpi, transparent=False, bbox_inches="tight")
 
 
 def list_matfiles(matfilesPath):
     files = [
-        f
-        for f in listdir(matfilesPath)
-        if isfile(join(matfilesPath, f)) and f.endswith(".mat")
+        f for f in listdir(matfilesPath) if isfile(join(matfilesPath, f)) and f.endswith(".mat")
     ]
     return reversed(files)
 
+
 def list_png(matfilesPath):
     files = [
-        f
-        for f in listdir(matfilesPath)
-        if isfile(join(matfilesPath, f)) and f.endswith(".png")
+        f for f in listdir(matfilesPath) if isfile(join(matfilesPath, f)) and f.endswith(".png")
     ]
     return reversed(files)
+
 
 def link_length(x, y):
     length = 0
@@ -372,9 +351,7 @@ def plot_deltavslength(links, postProcessPath, file):
     fig.savefig(saveVolumePath, dpi=dpi, transparent=False, box_inches="tight")
 
 
-def plot_NetworkTotalLength(
-    file_names, delta_nodes, network_length, postProcessPath
-):
+def plot_NetworkTotalLength(file_names, delta_nodes, network_length, postProcessPath):
     # Sonke, 2022.
     fig = plt.figure(figsize=(8, 6))
     plt.style.use("seaborn-white")
@@ -491,9 +468,7 @@ def postprocess(
     print("- Processing with Delta " + str("{:1.2f}".format(Delta)))
 
     # Load matfile with links details
-    links_original, links_filtered, x_links, y_links = load_matfile(
-        matfilesPath, file, Delta
-    )
+    links_original, links_filtered, x_links, y_links = load_matfile(matfilesPath, file, Delta)
 
     # Load DEM for plots
     DEM, DEMpath, w, h, c = load_background(postProcessPath, file)
@@ -600,7 +575,7 @@ def get_edges(links_filtered, coords_nodes, w, h):
 
 
 def make_network(coords_nodes, edges, w, h, directed, name, Delta, saveGraphs, postProcessPath):
-    
+
     if directed:
         G = nx.DiGraph()
     else:
@@ -620,23 +595,17 @@ def make_network(coords_nodes, edges, w, h, directed, name, Delta, saveGraphs, p
     nx.draw(G, pos, with_labels=True)
     plt.axis("off")
     plt.xlim([-50, w + 50])
-    
+
     plt.ylim([-50, h + 50])
     plt.show()
 
     if saveGraphs:
         saveGraphPath = join(
-            postProcessPath,'graphs',
-            str(
-                name[:-4]
-                + "_Delta"
-                + str("{:1.2f}".format(Delta))
-                + "_graph.png"
-            ),
+            postProcessPath,
+            "graphs",
+            str(name[:-4] + "_Delta" + str("{:1.2f}".format(Delta)) + "_graph.png"),
         )
-        fig.savefig(
-            saveGraphPath, dpi=dpi, transparent=False, bbox_inches="tight"
-        )
+        fig.savefig(saveGraphPath, dpi=dpi, transparent=False, bbox_inches="tight")
 
     return
 
@@ -651,9 +620,7 @@ def find_nearest(direction, point, links, w, h):
     # the file links containing the links is the file .mat
     # w and h are respectively the width and the height of the DEM
 
-    if (
-        direction == "nord" and int(point[1]) < h
-    ):  # check if the point is not out of the boundaries
+    if direction == "nord" and int(point[1]) < h:  # check if the point is not out of the boundaries
         y = int(point[1]) + 1  # +1 to go the the north
         while [
             int(point[0]),
@@ -698,7 +665,7 @@ def find_nearest(direction, point, links, w, h):
 
 
 def close_gap(point, link, links, w, h):
-    
+
     # close_gap return a matrix which contains the coordinates of the points
     # used to close the gap between a point and its nearest point in an other link
 
@@ -709,10 +676,7 @@ def close_gap(point, link, links, w, h):
 
     # direction nord
 
-    if (
-        find_nearest("nord", point, links, w, h)
-        != "Boundary reached : no nearest value"
-    ):
+    if find_nearest("nord", point, links, w, h) != "Boundary reached : no nearest value":
         # check that the nearest point is not out of the boundaries
         x_nord, y_nord = find_nearest(
             "nord", point, links, w, h
@@ -727,9 +691,7 @@ def close_gap(point, link, links, w, h):
                 != "Boundary reached : no nearest value"
             ):
                 # we continue the search of the nearest point, starting from the previous nearest point
-                x_nord, y_nord = find_nearest(
-                    "nord", [x_nord, y_nord], links, w, h
-                )
+                x_nord, y_nord = find_nearest("nord", [x_nord, y_nord], links, w, h)
             else:
                 break
         # if the nearest point is not in the link, we compute the distance between the point and the nearest point
@@ -741,10 +703,7 @@ def close_gap(point, link, links, w, h):
     # repeat the same for the other 3 directions
 
     # direction est
-    if (
-        find_nearest("est", point, links, w, h)
-        != "Boundary reached : no nearest value"
-    ):
+    if find_nearest("est", point, links, w, h) != "Boundary reached : no nearest value":
         x_est, y_est = find_nearest("est", point, links, w, h)
         while [x_est, y_est] in link.tolist():
             if (
@@ -759,10 +718,7 @@ def close_gap(point, link, links, w, h):
         dist_est = "unknowm"
 
     # direction sud
-    if (
-        find_nearest("sud", point, links, w, h)
-        != "Boundary reached : no nearest value"
-    ):
+    if find_nearest("sud", point, links, w, h) != "Boundary reached : no nearest value":
         x_sud, y_sud = find_nearest("sud", point, links, w, h)
         while [x_sud, y_sud] in link.tolist():
             if (
@@ -777,19 +733,14 @@ def close_gap(point, link, links, w, h):
         dist_sud = "unknowm"
 
     # direction ouest
-    if (
-        find_nearest("ouest", point, links, w, h)
-        != "Boundary reached : no nearest value"
-    ):
+    if find_nearest("ouest", point, links, w, h) != "Boundary reached : no nearest value":
         x_ouest, y_ouest = find_nearest("ouest", point, links, w, h)
         while [x_ouest, y_ouest] in link.tolist():
             if (
                 find_nearest("ouest", [x_ouest, y_ouest], links, w, h)
                 != "Boundary reached : no nearest value"
             ):
-                x_ouest, y_ouest = find_nearest(
-                    "ouest", [x_ouest, y_ouest], links, w, h
-                )
+                x_ouest, y_ouest = find_nearest("ouest", [x_ouest, y_ouest], links, w, h)
             else:
                 break
         dist_ouest = dist(point, [x_ouest, y_ouest])
@@ -797,11 +748,7 @@ def close_gap(point, link, links, w, h):
         dist_ouest = "unknowm"
 
     # create a list with all the distances computed in several directions
-    l = [
-        x
-        for x in [dist_nord, dist_est, dist_sud, dist_ouest]
-        if x != "unknowm"
-    ]
+    l = [x for x in [dist_nord, dist_est, dist_sud, dist_ouest] if x != "unknowm"]
 
     if l != []:  # if the list is not empty, we compute the minimum distance
         min_dist = min(l)
@@ -809,24 +756,16 @@ def close_gap(point, link, links, w, h):
         if min_dist == dist_nord:
             # we fill the gap between the point and the nearest point by filling the matrix link_gap
             for i in range(0, y_nord - int(point[1])):
-                link_gap = np.append(
-                    link_gap, np.array([[point[0], int(point[1]) + i]]), axis=0
-                )
+                link_gap = np.append(link_gap, np.array([[point[0], int(point[1]) + i]]), axis=0)
         if min_dist == dist_est:
             for i in range(0, x_est - int(point[0])):
-                link_gap = np.append(
-                    link_gap, np.array([[int(point[0]) + i, point[1]]]), axis=0
-                )
+                link_gap = np.append(link_gap, np.array([[int(point[0]) + i, point[1]]]), axis=0)
         if min_dist == dist_sud:
             for i in range(0, int(point[1]) - y_sud):
-                link_gap = np.append(
-                    link_gap, np.array([[point[0], int(point[1]) - i]]), axis=0
-                )
+                link_gap = np.append(link_gap, np.array([[point[0], int(point[1]) - i]]), axis=0)
         if min_dist == dist_ouest:
             for i in range(0, int(point[0]) - x_ouest):
-                link_gap = np.append(
-                    link_gap, np.array([[int(point[0]) - i, point[1]]]), axis=0
-                )
+                link_gap = np.append(link_gap, np.array([[int(point[0]) - i, point[1]]]), axis=0)
 
     return link_gap
 
@@ -916,14 +855,10 @@ def smooth(links_original, Delta, window, w, h):
 
         # fill the gap between the first and the last points and their nearest points
         if 0 < point0[0] < w and 0 < point0[1] < h:
-            link_gap0 = close_gap(
-                point0, np.transpose(np.array([link_x, link_y])), Smooth2, w, h
-            )
+            link_gap0 = close_gap(point0, np.transpose(np.array([link_x, link_y])), Smooth2, w, h)
             Smooth = np.append(Smooth, link_gap0, axis=0)
         if 0 < point1[0] < w and 0 < point1[1] < h:
-            link_gap1 = close_gap(
-                point1, np.transpose(np.array([link_x, link_y])), Smooth2, w, h
-            )
+            link_gap1 = close_gap(point1, np.transpose(np.array([link_x, link_y])), Smooth2, w, h)
             Smooth = np.append(Smooth, link_gap1, axis=0)
             # in the smooth matrix which contains the smooth links, we add the gap coordinates
 
@@ -931,7 +866,7 @@ def smooth(links_original, Delta, window, w, h):
 
 
 def computeBI(binary, choice, column_selected):
-    
+
     # Compute the number of branches for different sections
     # The sections can be chosen in 'column_selected' --> choice = 'selected'
     # otherwise, all the sections are computed --> choice = 'all'
@@ -943,7 +878,7 @@ def computeBI(binary, choice, column_selected):
     img = np.array(img.convert("L"))
     img[img == 0] = 1
     height, width = np.shape(img)
-    
+
     plt.imshow(img, cmap="Greys")
 
     if choice == "selected":
@@ -974,3 +909,222 @@ def computeBI(binary, choice, column_selected):
         return nbranches
 
     # return a matrix containing the sections and number of branches related
+
+
+# ------------------------------------------------------------------------------
+#                          ELEVATION DISTRIBUTION
+# ------------------------------------------------------------------------------
+
+
+def links_elevations(DEM, links_original, Delta):
+
+    # extracts elevation values of DEMs detrended for each pixel which is a part
+    # of a link at a given delta.
+
+    # return a matrix with different elevation values along the links
+
+    elev_list = []
+
+    with open(DEM, "r") as f:
+        line = f.readline()
+        for line in f:
+            elev_list.append(line.split())
+    elevations = np.asarray(elev_list)
+    elevations = elevations.astype(np.float)
+    rows, columns = np.shape(elevations)
+    print(np.shape(elevations))
+
+    # data = loadmat(links)
+    # links = data["links"]
+    index_link = links_original[:, 0]
+    delta_link = links_original[:, 1]
+    x = links_original[:, 2]
+    y = links_original[:, 3]
+    d = 0
+
+    # taking all the indexes > delta
+    while delta_link[d] >= Delta or delta_link[d] == "inf":
+        d += 1
+
+    # indexes is a list of lists containing the index lists of each link
+    indexes = []
+    index_list = []
+    for i in range(1, d + 1):
+        if index_link[i] == index_link[i - 1]:
+            index_list.append(i)
+        else:
+            indexes.append(index_list)
+            index_list = []
+            index_list.append(i)
+
+    links_elevations = np.zeros((0, 3))
+
+    for index in indexes:
+        for i in index:
+            xi = int(x[i])
+            yi = int(y[i])
+            if 0 <= xi < columns and 0 <= yi < rows:
+                elevation_i = elevations[yi][xi]
+                links_elevations = np.append(
+                    links_elevations,
+                    np.array([[index_link[i], delta_link[i], elevation_i]]),
+                    axis=0,
+                )
+
+    return links_elevations
+
+
+# ---------------------- Distributions of the elevations --------------------------
+def elevation_distributions(elevations, choice):
+    # To choose the plot, modify 'choice' which can be :
+    #    --> 'along each link' : to plot the distribution of the elevation along the link
+    #    --> 'for different volume parameter scales' : to plot the istribution of the elevation for different volume parameter scales
+
+    plt.style.use("seaborn-pastel")
+
+    if choice == "along each link":
+        elevation_list = []
+        for i in range(1, len(elevations)):
+            if elevations[i][0] == elevations[i - 1][0]:
+                elevation_list.append(elevations[i][2])
+            else:
+                elevation_list.append(elevations[i][2])
+                plt.hist(elevation_list, bins=20, edgecolor="grey")
+                plt.title(
+                    "Distribution of the elevation along the link "
+                    + str(int(elevations[i - 1][0]))
+                    + " and delta = "
+                    + str("%.3g" % elevations[i - 1][1])
+                )
+                plt.xlabel("Corrected elevation (m)")
+                plt.ylabel("Count")
+                plt.show()
+                elevation_list = []
+            if i == len(elevations) - 1:
+                plt.hist(elevation_list, bins=20, edgecolor="grey")
+                plt.title(
+                    "Distribution of the elevation along the link "
+                    + str(int(elevations[i - 1][0]))
+                    + " and delta = "
+                    + str("%.3g" % elevations[i - 1][1])
+                )
+                plt.xlabel("Corrected elevation (m)")
+                plt.ylabel("Count")
+                plt.show()
+
+    if choice == "for different volume parameter scales":
+        liste = []
+        for i in range(1, len(elevations)):
+            if elevations[i][0] == elevations[i - 1][0]:
+                liste.append(elevations[i][2])
+            else:
+                lab = "delta=" + str("%.3g" % elevations[i - 1][1])
+                ax = plt.subplot()
+                cm = plt.cm.get_cmap("RdYlBu_r")
+                N, bins, patches = ax.hist(liste, label=lab, bins=20, alpha=0.6, edgecolor="grey")
+                # patches.set_facecolor("red")
+                liste = []
+                liste.append(elevations[i][2])
+            if i == len(elevations) - 1:
+                lab = "delta=" + str("%.3g" % elevations[i - 1][1])
+                ax = plt.subplot()
+                cm = plt.cm.get_cmap("RdYlBu_r")
+                N, bins, patches = ax.hist(liste, label=lab, bins=20, alpha=0.6, edgecolor="grey")
+
+        ax.legend(fontsize=8, ncol=2)
+        plt.title("Distribution of the elevation for different volume parameter scales")
+        plt.xlabel("Elevation (m)")
+        plt.ylabel("Count")
+        plt.show()
+
+
+# ------------------------------------------------------------------------------
+#                    Characterisation of channel evolution
+# ------------------------------------------------------------------------------
+
+
+# -----------------------Time average of bed elevations-------------------------
+def time_average(DEM_path, dt, delta_T, w, h):
+    # computes the time averaging bed topography for 1 realization of channel
+    # evolution experiment
+
+    # --> dt is the time interval between two DEMs
+    # --> delta_T is time period sufficiently long for the braided channel to
+    #     experience all the possible independent configurations
+    # --> the time average can be computed from t0 to t0 + delta_T for t0 a
+    #     time far enough from the start of the simulation for which we observe
+    #     a statistically stationary braiding channel
+
+    # DEM are detrended .txt files from the detrend function
+    DEMs = [f for f in listdir(DEM_path) if isfile(join(DEM_path, f)) and f.endswith(".txt")]
+
+    B = np.zeros((h, w))
+
+    for DEM in DEMs:
+        topo_list = []
+        with open(DEM_path + DEM, "r") as f:
+            line = f.readline()
+            for line in f:
+                topo_list.append(line.split())
+        topo = np.asarray(topo_list)
+        topo = topo.astype(np.float)
+        topo = topo * dt
+        B = np.add(B, topo)
+
+    B = B / (delta_T + dt)
+
+    # return a matrix with time averaging topography
+    return B
+
+
+# ----------------------Ensemble average of bed elevations----------------------
+def ensemble_average(DEM_path, w, h):
+    # computes the ensemble averaging bed topography at a given time
+    # for multiple independent realizations of channel evolution experiments
+
+    # DEM are detrended .txt files from the detrend function
+    DEMs = [f for f in listdir(DEM_path) if isfile(join(DEM_path, f)) and f.endswith(".txt")]
+
+    B = np.zeros((h, w))
+    count = 0
+
+    for DEM in DEMs:
+        count += 1
+        topo_list = []
+        with open(DEM_path + DEM, "r") as f:
+            line = f.readline()
+            for line in f:
+                topo_list.append(line.split())
+        topo = np.asarray(topo_list)
+        topo = topo.astype(np.float)
+        B = np.add(B, topo)
+
+    B = B / count
+
+    # return a matrix with time averaging topography
+    return B
+
+
+# --------------------------Fluctuating bed elevations--------------------------
+# HAY QUE MODIFICAR ESTA FUNCIÓN PARA QUE CALCULE BIEN LA FLUCTUACIÓN CON RESPECTO A LA MEDIA.
+def fluctuations(DEM_path, DEM, dt, delta_T, w, h, choice):
+    # --> computes the fluctuating bed elevations for different DEMs based on
+    #     either the ensemble average or the time average
+
+    # DEM are detrended .txt files from the detrend function
+
+    if choice == "ensemble":
+        B = ensemble_average(DEM_path, w, h)
+    if choice == "time":
+        B = time_average(DEM_path, dt, delta_T, w, h)
+
+    topo_list = []
+    with open(DEM, "r") as f:
+        line = f.readline()
+        for line in f:
+            topo_list.append(line.split())
+    topo = np.asarray(topo_list)
+    topo = topo.astype(np.float)
+    b = topo - B
+
+    return b

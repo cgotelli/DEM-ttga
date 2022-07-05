@@ -3,9 +3,9 @@ import os
 
 # --------------------------------- PATHS -------------------------------------
 # Path where the original DEMs are stored
-originalDEMsPath = "/home/cgotelli/Documents/ttga_DEM/originalDEMs/"
+originalDEMsPath = "/mnt/data2/DEMtest/originalDEMs/"
 # Path for TTGA's executable file. Read the README file for folder structure example.
-ttga_path = "/home/cgotelli/Documents/ttga_software/build/src/gui/ttga"
+ttga_path = "/home/epfl-lhe/Documents/TTGA/build/src/gui/ttga"
 
 # ---------------------- DEM preparation parameters ---------------------------
 originalRes = 0.0004  # Meters per pixel in original DEMs
@@ -48,7 +48,7 @@ boundary_file_path = ""
 
 # --------------------------------- TTGA --------------------------------------
 
-toProcessPath = os.path.join(originalDEMsPath, "..","toProcess/")
+toProcessPath = os.path.join(originalDEMsPath, "..", "toProcess/")
 
 DEM = df.DEM_preparation(
     originalDEMsPath,

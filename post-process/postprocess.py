@@ -6,14 +6,16 @@ import numpy as np
 # ------------------------------ PARAMETERS -----------------------------------
 # Path for output folder where links files are stored
 
-postProcessPath = "/home/cgotelli/Documents/ttga_DEM/output/"
+postProcessPath = "/mnt/data2/DEMtest/output/"
 matfilesPath = join(postProcessPath, "matfiles")
 
 # deltas = np.arange(0.2, 1, 0.1)
-deltas = [0.5]
+deltas = [450]
 smoothWindow = 30
 choice = "all"  # or 'all'
 columns_selected = [5, 151, 500]
+dt = 0.02
+delta_T = 0.2
 
 
 count_nodes = []  # Number of nodes per network (delta)
@@ -24,6 +26,8 @@ network_length = []  # Array for network length for each delta
 ordered_nodes = []  # Nodes with ordered [index, xcoord, ycoord]
 edges = []  # Edges defined as [start, end] based on ordered nodes' index
 extremeNodes = []
+w = 646
+h = 564
 
 # ------------------------------- BOOLEANS ------------------------------------
 # Booleans for appyling (or not) the different processes
@@ -31,19 +35,27 @@ extremeNodes = []
 saveMat = False  # Transform links' .txt files to .mat
 plotNetwork = True  # Plot DEM with
 plotBinary = True  # Plot binary image
-smoothChannels = True  # For smoothing channel network
+smoothChannels = False  # For smoothing channel network
 includeNodes = True  # Include nodes in network graph
 # Plot total number of nodes in time. If True, "plotNetwork" must be True
 plotNodeCount = True
 computeLength = True
 # To plot network length in time. If True, "computeLength" must be True
-plotTotalLength = False  
+plotTotalLength = False
 plotDeltavsLength = False
 getMatrices = True  # Directed graphs matrices
 directedGraphs = False
 saveGraphs = True
 computeBraidingIndex = True
 
+DEMtimeAverage = False
+DEMensembleAverage = False
+
+ElevationDistribution = False
+# 'along each link': to plot the distribution of the elevation along the link
+# 'for different volume parameter scales': to plot the istribution of the elevation 
+# for different volume parameter scales
+ElevationMode = 'along each link'
 
 # ------------------------------- PROCESS -------------------------------------
 # We transform to matfile the links *.txt file.
@@ -108,19 +120,15 @@ for file in files:
 
 if plotNodeCount:
     print("***** Print the number of nodes in time *****")
-    pp.plot_nodesEvolution(
-        file_names, delta_nodes, count_nodes, postProcessPath
-    )
+    pp.plot_nodesEvolution(file_names, delta_nodes, count_nodes, postProcessPath)
 
 if plotTotalLength:
     print("***** Print the network length evolution *****")
-    pp.plot_NetworkTotalLength(
-        file_names, delta_nodes, network_length, postProcessPath
-    )
+    pp.plot_NetworkTotalLength(file_names, delta_nodes, network_length, postProcessPath)
 
 if computeBraidingIndex:
     print("***** Braiding index computation and store in Matfile *****")
-    binaryFolder = join(postProcessPath, 'binary')
+    binaryFolder = join(postProcessPath, "binary")
     files = pp.list_png(binaryFolder)
 
     files = sorted(files)  # Sort by name
@@ -131,3 +139,36 @@ if computeBraidingIndex:
         binaryFile = join(binaryFolder, file)
         BIvalue = pp.computeBI(binaryFile, choice, columns_selected)
         BImatrix.append([file, BIvalue])
+
+if DEMtimeAverage:
+    DEMsPath = join(postProcessPath, "..", "binary")
+    DEMavg = pp.time_average(DEMsPath, dt, delta_T, w, h)
+
+if DEMensembleAverage:
+    DEMsPath = join(postProcessPath, "..", "binary")
+    DEMensAvg = pp.ensemble_average(DEMsPath, w, h)
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
