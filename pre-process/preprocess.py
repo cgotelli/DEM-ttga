@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import preprocess_functions as df
 import os
 
 # --------------------------------- PATHS -------------------------------------
 # Path where the original DEMs are stored
-originalDEMsPath = "/mnt/data2/DEMtest/originalDEMs/"
+originalDEMsPath = "/mnt/data2/Metashape-outputs/Raster/done/"
 # Path for TTGA's executable file. Read the README file for folder structure example.
 ttga_path = "/home/epfl-lhe/Documents/TTGA/build/src/gui/ttga"
 
@@ -11,11 +14,11 @@ ttga_path = "/home/epfl-lhe/Documents/TTGA/build/src/gui/ttga"
 originalRes = 0.0004  # Meters per pixel in original DEMs
 resolutionFactor = 1 / 10  # Factor to increase/decrease DEM resolution
 modelFactor = (
-    30  # Scale between model and prototype. Set 1 for real size DEMs.
+    1  # Scale between model and prototype. Set 1 for real size DEMs.
 )
 dpi = 900  # Image quality
 orig = False  # Convert or not the original resolution DEM to TTGA-txt input
-detrend = True  # Remove mean value
+detrend = False  # Remove mean value
 
 # --------------------------------- TTGA --------------------------------------
 
