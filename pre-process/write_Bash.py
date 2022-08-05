@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # -------------------------------- IMPORT -------------------------------------
 from os import listdir, mkdir
 from os.path import isfile, join, exists
