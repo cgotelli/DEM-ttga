@@ -6,7 +6,7 @@ import os
 
 # --------------------------------- PATHS -------------------------------------
 # Path where the original DEMs are stored
-originalDEMsPath = "/mnt/data2/Metashape-outputs/Raster/done/"
+originalDEMsPath = "/home/epfl-lhe/Desktop/"
 # Path for TTGA's executable file. Read the README file for folder structure example.
 ttga_path = "/home/epfl-lhe/Documents/TTGA/build/src/gui/ttga"
 
